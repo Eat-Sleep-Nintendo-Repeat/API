@@ -162,9 +162,9 @@ app.use("/token-exchange", async (req, res) => {
     })
     
     //generate JSW and respond with token
-    jwt.sign({ username: response.data.username, discriminator: response.data.discriminator, avatar: response.data.avatar, type: memberdb.type, serverbooster: memberdb.serverbooster}, config.key, {expiresIn: "15m"}, function(err, token) {
+    jwt.sign({id: response.data.id, username: response.data.username, discriminator: response.data.discriminator, avatar: response.data.avatar, type: memberdb.type, serverbooster: memberdb.serverbooster}, config.key, {expiresIn: "15m"}, function(err, token) {
       if (err) return res.status(500).send({message: "Something went wrong on our side while we tried to generate your JSW Token. Please try again later"})
-      res.send(token)
+      res.send({token: token})
     });
 
   }).catch(async (error) => {
