@@ -33,7 +33,7 @@ app.get("/discord/callback", async (req, res) => {
         code: code,
         scope: "identify email",
         grantType: "authorization_code",
-        redirectUri: `${tls == true ? "https" : "http"}://${req.headers.host}/auth/discord/callback`
+        redirectUri: `${`${tls == true ? "https" : "http"}://${req.headers.host}${req.header.host == "eat-sleep-nintendo-repeat.eu" ? "/api/v1" : ""}/auth/discord/callback`}`
     }).catch(e => {
         res.status(500).send("[DISCORD CALLBACK] Ein Fehler ist während des Logins aufgetreten. Falls dies öfters passiert, schicke bitte einen Screenshot von diesen Text an einen verantwortlichen von Eat, Sleep, Nintendo, Repeat\n\n::: " + JSON.stringify(e.response))
       })
@@ -42,7 +42,6 @@ app.get("/discord/callback", async (req, res) => {
     var access_token = tokens.access_token,
         refresh_token = tokens.refresh_token,
         scopes = tokens.scope.split(" "),
-        redirect = `${tls == true ? "https" : "http"}://${req.headers.host}/auth/discord/callback`,
         expire_date = new Date();
         expire_date.setSeconds(expire_date.getSeconds() + (tokens.expires_in / 100 * 95))
 
@@ -66,7 +65,7 @@ app.get("/discord/callback", async (req, res) => {
         "oauth.refresh_token": refresh_token,
         "oauth.expire_date": expire_date,
         "oauth.scopes": scopes,
-        "oauth.redirect": `${tls == true ? "https" : "http"}://${req.headers.host}/auth/discord/callback`,
+        "oauth.redirect": `${`${tls == true ? "https" : "http"}://${req.headers.host}${req.header.host == "eat-sleep-nintendo-repeat.eu" ? "/api/v1" : ""}/auth/discord/callback`}`,
         "oauth.cookies": memberdb.oauth.cookies
       }).then(() => {
         //save cookie in browser storage
