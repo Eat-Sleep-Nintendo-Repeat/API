@@ -41,9 +41,9 @@ app.use("/", async (req, res, next) => {
   }
 })
 
-app.get("/api/test", (req, res) => {
-  res.send(req.user)
-})
+//users route
+const users = require("./routes/api/user/users")
+app.use("/users", users)
 
 app.listen(7869, () => {
   console.log("API is active and listenig on 7869");
