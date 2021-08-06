@@ -13,6 +13,7 @@ const tls = false
 
 //redirect to Discord
 app.get("/discord", (req, res) => {
+  console.log(req.header.host)
 res.redirect(
     `https://discord.com/api/oauth2/authorize?response_type=code&client_id=${
       config.discord_api.client_id
