@@ -16,7 +16,7 @@ app.get("/discord", (req, res) => {
 res.redirect(
     `https://discord.com/api/oauth2/authorize?response_type=code&client_id=${
       config.discord_api.client_id
-    }&scope=${"identify email"}&redirect_uri=${`${tls == true ? "https" : "http"}://${req.headers.host}/auth/discord/callback`}`
+    }&scope=${"identify email"}&redirect_uri=${`${tls == true ? "https" : "http"}://${req.headers.host}${req.header.host == "eat-sleep-nintendo-repeat.eu" ? "/api/v1" : ""}/auth/discord/callback`}`
   );
 })
 
