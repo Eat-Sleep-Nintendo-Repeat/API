@@ -9,6 +9,8 @@ app.use(cookieParser());
 //Cross-Origin Resource Sharing
 app.use("/", (req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*")
+  res.set("Service-Indent", "Eat, Sleep, Nintendo, Repeat - API")
+  console.log(req.originalUrl)
   next();
 })
 
