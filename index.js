@@ -2,13 +2,23 @@ const express = require("express");
 var cookieParser = require("cookie-parser");
 var jsw = require("jsonwebtoken")
 var config = require("./config.json")
+var cors = require('cors')
+
 
 const app = express();
 app.use(cookieParser());
+app.use(cors({
+  origin: "*",
+  optionsSuccessStatus: 200,
+}))
+app.options('*', cors())
 
 //Cross-Origin Resource Sharing
 app.use("/", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*")
+  // res.setHeader("Access-Control-Allow-Origin", "*")
+  // res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+  // res.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
+
   console.log(req.originalUrl)
   next();
 })
@@ -20,6 +30,10 @@ require("./database")
 // auth route
 const auth = require("./routes/auth")
 app.use("/auth", auth)
+
+app.get("/test", (req, res) => {
+  return res.send({message: "test passed"})
+})
 
 //session_token checker
 app.use("/", async (req, res, next) => {
