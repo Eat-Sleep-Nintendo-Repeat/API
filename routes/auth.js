@@ -13,11 +13,10 @@ const tls = false
 
 //redirect to Discord
 app.get("/discord", (req, res) => {
-  console.log(req.headers.host)
 res.redirect(
     `https://discord.com/api/oauth2/authorize?response_type=code&client_id=${
       config.discord_api.client_id
-    }&scope=${"identify email"}&redirect_uri=${`${tls == true ? "https" : "http"}://${req.headers.host}${req.headers.host == "eat-sleep-nintendo-repeat.eu" ? "/api/v1" : ""}/auth/discord/callback`}`
+    }&scope=${"identify email"}&redirect_uri=${`${tls == true ? "https" : "http"}://${req.headers.host}${req.headers.production_mode ? ":5670" : ""}/api/v1/auth/discord/callback`}`
   );
 })
 
@@ -34,7 +33,7 @@ app.get("/discord/callback", async (req, res) => {
         code: code,
         scope: "identify email",
         grantType: "authorization_code",
-        redirectUri: `${`${tls == true ? "https" : "http"}://${req.headers.host}${req.headers.host == "eat-sleep-nintendo-repeat.eu" ? "/api/v1" : ""}/auth/discord/callback`}`
+        redirectUri: `${`${tls == true ? "https" : "http"}://${req.headers.host == "localhost" ? "localhost:5670" : req.headers.host}/api/v1/auth/discord/callback`}`
     }).catch(e => {
         res.status(500).send("[DISCORD CALLBACK] Ein Fehler ist während des Logins aufgetreten. Falls dies öfters passiert, schicke bitte einen Screenshot von diesen Text an einen verantwortlichen von Eat, Sleep, Nintendo, Repeat\n\n::: " + JSON.stringify(e.response))
       })
@@ -66,7 +65,7 @@ app.get("/discord/callback", async (req, res) => {
         "oauth.refresh_token": refresh_token,
         "oauth.expire_date": expire_date,
         "oauth.scopes": scopes,
-        "oauth.redirect": `${`${tls == true ? "https" : "http"}://${req.headers.host}${req.headers.host == "eat-sleep-nintendo-repeat.eu" ? "/api/v1" : ""}/auth/discord/callback`}`,
+        "oauth.redirect": `${`${tls == true ? "https" : "http"}://${req.headers.host}/api/v1/auth/discord/callback`}`,
         "oauth.cookies": memberdb.oauth.cookies
       }).then(() => {
         //save cookie in browser storage
@@ -82,7 +81,7 @@ app.get("/discord/callback", async (req, res) => {
 
         //redirect user to UI Mainpage if UI didt set a redirect
         else {
-          res.redirect("/ui")
+          res.redirect("/")
         }
       })
     }).catch(err => {

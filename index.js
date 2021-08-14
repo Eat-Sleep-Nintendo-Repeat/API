@@ -2,26 +2,12 @@ const express = require("express");
 var cookieParser = require("cookie-parser");
 var jsw = require("jsonwebtoken")
 var config = require("./config.json")
-var cors = require('cors')
+var bodyParser = require('body-parser')
 
 
 const app = express();
 app.use(cookieParser());
-app.use(cors({
-  origin: "*",
-  optionsSuccessStatus: 200,
-}))
-app.options('*', cors())
-
-//Cross-Origin Resource Sharing
-app.use("/", (req, res, next) => {
-  // res.setHeader("Access-Control-Allow-Origin", "*")
-  // res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
-  // res.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-
-  console.log(req.originalUrl)
-  next();
-})
+app.use(bodyParser.json())
 
 //database
 require("./database")
@@ -30,10 +16,6 @@ require("./database")
 // auth route
 const auth = require("./routes/auth")
 app.use("/auth", auth)
-
-app.get("/test", (req, res) => {
-  return res.send({message: "test passed"})
-})
 
 //session_token checker
 app.use("/", async (req, res, next) => {
@@ -65,6 +47,10 @@ app.use("/", async (req, res, next) => {
 //users route
 const users = require("./routes/api/user/users")
 app.use("/users", users)
+
+// coins route
+const coins = require("./routes/api/coins/coins")
+app.use("/coins", coins)
 
 app.listen(7869, () => {
   console.log("API is active and listenig on 7869");
