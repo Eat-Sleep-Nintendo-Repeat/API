@@ -52,6 +52,10 @@ app.use("/users", users)
 const coins = require("./routes/api/coins/coins")
 app.use("/coins", coins)
 
+// warns route
+const warns = require("./routes/api/warns/warns")
+app.use("/warns", warns)
+
 app.listen(7869, () => {
   console.log("API is active and listenig on 7869");
 });
