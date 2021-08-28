@@ -24,8 +24,7 @@ LABEL traefik.enable="true" \
       traefik.http.routers.esnr-api.entrypoints="websecure" \
       traefik.http.routers.esnr-api.rule="Host(`eat-sleep-nintendo-repeat.eu`) && PathPrefix(`/api/v1`)" \
       traefik.http.middlewares.esnr-api-stripprefix.stripprefix.prefixes="/api/v1" \
-      traefik.http.middlewares.esnr-api-ratelimit.ratelimit.average=100 \
-      traefik.http.routers.esnr-api.middlewares="esnr-api-stripprefix, esnr-api-ratelimit" \
+      traefik.http.routers.esnr-api.middlewares="esnr-api-stripprefix" \
       traefik.port="7871" \
       traefik.http.routers.esnr-api.tls.certresolver="lets-encr"
 
