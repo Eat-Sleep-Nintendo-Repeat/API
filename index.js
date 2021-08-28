@@ -3,6 +3,7 @@ var cookieParser = require("cookie-parser");
 var jsw = require("jsonwebtoken")
 var config = require("./config.json")
 var bodyParser = require('body-parser')
+const MEMBER = require("./models/MEMBER")
 
 
 const app = express();
@@ -14,8 +15,11 @@ require("./database")
 
 //// routes
 // auth route
-const auth = require("./routes/auth")
-app.use("/auth", auth)
+const discord_oauth = require("./routes/api/auth/discord oauth")
+const token_exchange = require("./routes/api/auth/token-exchange")
+const api_key = require("./routes/api/auth/api-keys")
+app.use("/auth", discord_oauth)
+app.use("/auth", token_exchange)
 
 //session_token checker
 app.use("/", async (req, res, next) => {
@@ -26,23 +30,46 @@ app.use("/", async (req, res, next) => {
     case "Access":
       //Default access_token = user
 
-      //veryfing token
+      //verifying token
       var token = await jsw.verify(req.header("Authorization").split(" ")[1], config.key, (err, token) => {
         if (err) return res.status(401).send({"error": `unauthorized - access_token is invalid`})
 
         //add token to req objekt
         req.user = token
+        req.user.isuser = true
 
         //forward request
         next();
       })
       break;
-  
+    case "Token":
+      //api key = probably a bot
+
+      //verifying key
+      var memberdb = await MEMBER.findOne({"dev_accounts.api_key": req.header("Authorization").split(" ")[1]})
+
+      if (!memberdb) return res.status(401).send({"error": `unauthorized - api_key is invalid`})
+
+      req.user = {
+        id: memberdb.id,
+        username: memberdb.informations.name,
+        discriminator: memberdb.informations.discriminator,
+        avatar: memberdb.informations.avatar,
+        type: memberdb.type,
+        serverbooster: memberdb.serverbooster,
+        isuser: false
+      }
+
+      //forward request
+      next();
+      break;
+
     default:
       return res.status(401).send({"message": `unauthorized - unknown token type >${req.header("Authorization").split(" ")[0]}<`})
-      break;
   }
 })
+
+app.use("/auth/keys", api_key)
 
 //users route
 const users = require("./routes/api/user/users")
@@ -53,7 +80,8 @@ const coins = require("./routes/api/coins/coins")
 app.use("/coins", coins)
 
 // warns route
-const warns = require("./routes/api/warns/warns")
+const warns = require("./routes/api/warns/warns");
+const { discriminator } = require("./models/MEMBER");
 app.use("/warns", warns)
 
 app.listen(7869, () => {

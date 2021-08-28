@@ -41,6 +41,8 @@ const MemberSchema = mongoose.Schema({
     },
   },
 
+  dev_accounts: {type: Array, default: []},
+
   usemyvoice: {
     accepted: { type: Boolean, default: false },
     date: Date,
