@@ -29,7 +29,7 @@ app.post("/", async (req, res) => {
 
     if (member.dev_accounts.length >= 3) return res.status(400).send({message: `You cannot create more then ${member.dev_accounts.length} API Keys`})
 
-    if (!req.body.name) return res.status(400).send({message: "There is no mame in the Body"})
+    if (!req.body.name) return res.status(400).send({message: "There is no name in the Body"})
     if (req.body.name.length > 20) return res.status(400).send({message: `The name must be shorter than 20 characters. Its currently ${req.body.name.length} charachters long`})
     
     //create new key and save to database
@@ -61,7 +61,7 @@ app.delete("/:id", async (req, res) => {
 
     //save new key object to database
     await MEMBER.findOneAndUpdate({id: req.user.id}, {"dev_accounts": member.dev_accounts});
-    res.status(204).send()
+    res.status(200).send("OK")
 
 })
 
