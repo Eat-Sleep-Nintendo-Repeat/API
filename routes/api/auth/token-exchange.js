@@ -78,7 +78,9 @@ app.use("/token-exchange", async (req, res) => {
       })
 
       //check if database woud delete this member in 15 minutes
-      if (memberdb.delete_in && new Date().setMinutes(new Date().getMinutes() + 16) > memberdb.delete_in) {
+      var checkdate = new Date()
+      checkdate.setMinutes(checkdate.getMinutes() + 16)
+      if (memberdb.delete_in && checkdate > memberdb.delete_in) {
         //delay the delete_in counter by two hours 
         memberdb.delete_in.setHours(memberdb.delete_in.getHours() + 2)
 
