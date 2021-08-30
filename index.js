@@ -81,7 +81,6 @@ app.use("/coins", coins)
 
 // warns route
 const warns = require("./routes/api/warns/warns");
-const { discriminator } = require("./models/MEMBER");
 app.use("/warns", warns)
 
 app.listen(7869, () => {

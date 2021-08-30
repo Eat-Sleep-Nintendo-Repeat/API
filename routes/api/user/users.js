@@ -53,7 +53,7 @@ api_route.get("/", async (req, res) => {
     if (memberdb.length == 0) return res.status(404).send({message: `Not Found - We were not able to find a any users with one of the following ids: ${ids.join(", ")}`})
 
 
-    res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "serverbooster": x.serverbooster}: {}))
+        res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {}))
 })
 
 module.exports = api_route;
