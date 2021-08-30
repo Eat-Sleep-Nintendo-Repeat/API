@@ -48,7 +48,9 @@ app.use("/", async (req, res, next) => {
       //verifying key
       var memberdb = await MEMBER.findOne({"dev_accounts.api_key": req.header("Authorization").split(" ")[1]})
 
+
       if (!memberdb) return res.status(401).send({"error": `unauthorized - api_key is invalid`})
+      var api_key = memberdb.dev_accounts.find(x => x.api_key === req.header("Authorization").split(" ")[1])
 
       req.user = {
         id: memberdb.id,
@@ -58,6 +60,11 @@ app.use("/", async (req, res, next) => {
         type: memberdb.type,
         serverbooster: memberdb.serverbooster,
         isuser: false
+      }
+
+      //check for cors header
+      if (api_key.cors_allowed && req.method === "GET" && api_key.cors != null) {
+        res.setHeader("Access-Control-Allow-Origin", api_key.cors)
       }
 
       //forward request
@@ -81,6 +88,7 @@ app.use("/coins", coins)
 
 // warns route
 const warns = require("./routes/api/warns/warns");
+const { request } = require("express");
 app.use("/warns", warns)
 
 app.listen(7869, () => {
