@@ -1,5 +1,6 @@
 const express = require("express");
 const MEMBER = require("../../../models/MEMBER")
+const typetoword = require("../../../modules/member_type_to_word")
 
 const api_route = express.Router();
 
@@ -24,6 +25,7 @@ api_route.get("/:userid", async (req, res) => {
             username: memberdb.informations.name,
             avatar: memberdb.informations.avatar,
             type: memberdb.type,
+            typeword: typetoword(memberdb.type),
             booster: memberdb.serverbooster
         },
         coindata: memberdb.currencys.coins 
