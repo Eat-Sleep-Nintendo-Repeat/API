@@ -26,8 +26,10 @@ app.get('*', (req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS")
   res.setHeader("Access-Control-Allow-Headers", "authorization")
   next();
-}
-})
+  }
+else {
+  next();
+}})
 
 //database
 require("./database")
