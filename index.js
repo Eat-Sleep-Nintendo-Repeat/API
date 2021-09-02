@@ -19,14 +19,15 @@ app.options('*', (req, res) => {
   res.send();
 })
 
-//CORS null origin handler
-// app.options('*', (req, res) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*")
-//   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS")
-//   res.setHeader("Access-Control-Allow-Headers", "authorization")
-//   res.setHeader("Access-Control-DEV-MESSAGE", "only * for preflight")
-//   res.send();
-// })
+// CORS null origin handler
+app.get('*', (req, res, next) => {
+  if (req.headers.origin == "null") {
+  res.setHeader("Access-Control-Allow-Origin", "null")
+  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS")
+  res.setHeader("Access-Control-Allow-Headers", "authorization")
+  next();
+}
+})
 
 //database
 require("./database")
