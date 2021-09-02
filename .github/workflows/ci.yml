@@ -4,17 +4,22 @@ on:
   push:
     branches:
       - "*"
-  pull_request:
 
 jobs:
-  njsscan:
+  generate_docs_job:
     runs-on: ubuntu-latest
-    name: njsscan check
+    name: Generating Docs
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v2
-    - name: nodejsscan scan
-      id: njsscan
-      uses: ajinabraham/njsscan-action@master
-      with:
-        args: '.'
+      # this step checks out the master branch of your repo using checkout action.
+      - name: Checks out the repository
+        id: checksout-repository
+        uses: actions/checkout@v2
+        with:
+          repository: ''
+      # this step generates the docs
+      - name: Generating Docs.
+        id: reading-file
+        uses: Pika1998/express-autodocs@v0.0.1
+      # Use the output from the `hello` step
+      - name: Get the output time
+        run: echo "The time was ${{ steps.reading-file.outputs.time }}"
