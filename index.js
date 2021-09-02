@@ -10,6 +10,24 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json())
 
+//CORS Preflight request handler
+app.options('*', (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*")
+  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS")
+  res.setHeader("Access-Control-Allow-Headers", "authorization")
+  res.setHeader("Access-Control-DEV-MESSAGE", "only * for preflight")
+  res.send();
+})
+
+//CORS null origin handler
+// app.options('*', (req, res) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*")
+//   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS")
+//   res.setHeader("Access-Control-Allow-Headers", "authorization")
+//   res.setHeader("Access-Control-DEV-MESSAGE", "only * for preflight")
+//   res.send();
+// })
+
 //database
 require("./database")
 
@@ -65,6 +83,8 @@ app.use("/", async (req, res, next) => {
       //check for cors header
       if (api_key.cors_allowed && req.method === "GET" && api_key.cors != null) {
         res.setHeader("Access-Control-Allow-Origin", api_key.cors)
+        res.setHeader("Access-Control-Allow-Methods", "GET")
+        res.setHeader("Access-Control-Allow-Headers", "authorization")
       }
 
       //forward request
