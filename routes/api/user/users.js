@@ -9,6 +9,14 @@ api_route.get("/@me", (req, res) => {
     res.send(req.user)
 })
 
+//responses with informations of top 10 Ranklist Users
+api_route.get("/toplist", async (req, res) => {
+    if (!req.query.max) req.query.max = 10
+    var memberdb = await MEMBER.find().sort({"currencys.ranks.rank": -1})
+        memberdb = memberdb.slice(0, req.query.max)
+        res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type), "serverbooster": x.serverbooster, rank: x.currencys.ranks.rank}: {}))
+})
+
 //responses with user info that matches requested id
 api_route.get("/:userid", async (req, res) => {
     var memberdb = await MEMBER.findOne({id: req.params.userid})
@@ -53,7 +61,7 @@ api_route.get("/", async (req, res) => {
     if (memberdb.length == 0) return res.status(404).send({message: `Not Found - We were not able to find a any users with one of the following ids: ${ids.join(", ")}`})
 
 
-        res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {}))
+    res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {}))
 })
 
 module.exports = api_route;
