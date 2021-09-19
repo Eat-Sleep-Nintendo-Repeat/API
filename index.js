@@ -111,8 +111,11 @@ app.use("/coins", coins)
 
 // warns route
 const warns = require("./routes/api/warns/warns");
-const { request } = require("express");
 app.use("/warns", warns)
+
+// use-my-voice route
+const umv = require("./routes/api/usemyvoice/umv");
+app.use("/usemyvoice", umv)
 
 app.listen(7869, () => {
   console.log("API is active and listenig on 7869");

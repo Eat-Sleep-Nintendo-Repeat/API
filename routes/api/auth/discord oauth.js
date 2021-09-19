@@ -13,10 +13,11 @@ var tls = false;
 
 //redirect to Discord
 app.get("/discord", (req, res) => {
+  if (!req.query.redirect) req.query.redirect = "no_redirect"
 res.redirect(
     `https://discord.com/api/oauth2/authorize?response_type=code&client_id=${
       config.discord_api.client_id
-    }&scope=${"identify email"}&redirect_uri=${`${tls == true ? "https" : "http"}://${req.headers.host}${req.headers.production_mode ? ":5670" : ""}/api/v1/auth/discord/callback`}`
+    }&scope=${"identify email"}&redirect_uri=${`${tls == true ? "https" : "http"}://${req.headers.host}${req.headers.production_mode ? ":5670" : ""}/api/v1/auth/discord/callback&state=${req.query.redirect}`}`
   );
 })
 
@@ -75,14 +76,13 @@ app.get("/discord/callback", async (req, res) => {
         res.cookie("refresh_token", user_refresh_token, { expires: cookieexpire});
 
         //redirect user to the page if UI has set a redirect
-        if(req.cookies.redirect) {
-           res.clearCookie("redirect")
-           res.redirect(req.cookies.redirect)
+        if(req.query.state && req.query.state.toUpperCase("HTTP")) {
+           res.redirect(req.query.state)
         }
 
         //redirect user to UI Mainpage if UI didt set a redirect
         else {
-          res.redirect("/")
+          res.redirect("/home")
         }
       })
     }).catch(err => {
