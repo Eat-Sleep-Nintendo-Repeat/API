@@ -28,6 +28,15 @@ api_route.post("/", async  (req, res) => {
     var memberdb = await MEMBER.findOne({id: req.user.id})
 
     if (!memberdb) return res.status(404).send({message: `Not Found - There is no Member with an ID of >${req.params.userid}<`})
+    
+    //check if last accept is past 24 Hours
+    var checking_date = new Date()
+    checking_date.setDate(checking_date.getDate() - 1)
+    if (memberdb.usemyvoice.date && memberdb.usemyvoice.date > checking_date) return res.status(400).send({message: `To fast - There must be 24 hours between your last acceptance attempt and this one `})
+
+    //check if his acceptence has been blocked by an admin
+    if (memberdb.usemyvoice.state === "removed_by_admin") return res.status(400).send({message: `Missing Permission - Your acceptance got removed by a member of the admin team. It is not possible to renew it by yourself`})
+
 
     //validate body
     if (!req.body.signature) return res.status(400).send({message: "Missing signature in body"})
@@ -67,7 +76,7 @@ api_route.delete("/", async  (req, res) => {
 
 
     //save to database
-    await MEMBER.findOneAndUpdate({id: req.user.id}, {usemyvoice: {accepted: false, state: "removed_by_user", signature: null, date: null}}, {new: true}).then(x => {
+    await MEMBER.findOneAndUpdate({id: req.user.id}, {usemyvoice: {accepted: false, state: "removed_by_user", signature: null, date: memberdb.usemyvoice.date}}, {new: true}).then(x => {
         res.send(x.usemyvoice)
     })
 
