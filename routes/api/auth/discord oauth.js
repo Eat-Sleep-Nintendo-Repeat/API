@@ -5,7 +5,8 @@ const axios = require("axios").default
 const nanoid = require("nanoid").nanoid;
 var jwt = require('jsonwebtoken');
 
-const config = require("../../../config.json")
+const config = require("../../../config.json");
+const io = require("../../socket/socketio");
 
 const app = express.Router();
 
@@ -84,10 +85,12 @@ app.get("/discord/callback", async (req, res) => {
         else {
           res.redirect("/home")
         }
+
+        //log channel
+        io.emit("log", {color: "#5865F2", title: "ein neuer refresh_token wurde generiert", fields: [{name: "User", value: memberdb.informations.name + "#" + memberdb.informations.discriminator, inline: true}, {name: "ID", value: memberdb.id, inline: true}]})
       })
     }).catch(err => {
-      //‼ ADD METHOD TO SHOW AND VISUALISE AN ERROR TO AN USER
-      if (err.response.status == 401) return res.status(500).send({message: "Something went wrong on our side. Or you changed the scopes from the Discord Login Page URI... Dont do that"})
+      if (err.response.status == 401) return res.status(500).send({message: "Something went wrong on our side. Or you changed the scopes from the Discord Login Page URI... Please dont do that"})
       else console.log(err.response.status, err.response.data)
     })
 })

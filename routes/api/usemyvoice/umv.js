@@ -2,10 +2,10 @@ const MEMBER = require("../../../models/MEMBER")
 const express = require("express")
 const axios = require("axios")
 const api_route = express.Router();
+const io = require("../../socket/socketio")
 
 //authenticate this route (no requests via token, no access to the data of others unless you are admin)
 api_route.use("/:userid", (req, res, next) => {
-    if (!req.user.isuser) return res.status(400).send({message: "This API Route can only be used via the officiall UI"})
     if (req.user.type == 0) return res.status(403).send({message: "You dont have the right permissions to use this route"})
     
     if (req.user.type >= 50 || req.params.userid == req.user.id) return next();
@@ -24,6 +24,8 @@ api_route.get("/:userid", async  (req, res) => {
 
 //creates new use my voice declaration of consent
 api_route.post("/", async  (req, res) => {
+    if (!req.user.isuser) return res.status(400).send({message: "This API Route can only be used via the officiall UI"})
+
     //fetch iser from database
     var memberdb = await MEMBER.findOne({id: req.user.id})
 
@@ -52,6 +54,7 @@ api_route.post("/", async  (req, res) => {
     //save to database
     await MEMBER.findOneAndUpdate({id: req.user.id}, {usemyvoice: {accepted: true, state: "accepted", signature: req.body.signature, date: new Date()}}, {new: true}).then(x => {
         res.send(x.usemyvoice)
+        io.emit("log", {color: "#EB459E", title: "Neue use my voice Einverständniss Erklärung!", fields: [{name: "User", value: memberdb.informations.name + "#" + memberdb.informations.discriminator, inline: true}, {name: "ID", value: memberdb.id, inline: true}, {name: "Signature", value: req.body.signature}]})
 
         //fetch email from discord api
         if (req.body.email === true) {
@@ -69,6 +72,8 @@ api_route.post("/", async  (req, res) => {
 
 //deletes use my voice declaration of consent
 api_route.delete("/", async  (req, res) => {
+    if (!req.user.isuser) return res.status(400).send({message: "This API Route can only be used via the officiall UI"})
+
     //fetch iser from database
     var memberdb = await MEMBER.findOne({id: req.user.id})
 

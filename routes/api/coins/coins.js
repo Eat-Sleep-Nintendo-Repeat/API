@@ -92,7 +92,7 @@ api_route.post("/:userid/daily", async (req, res) => {
     }
     else {
         var next_possible_daily = last_daily
-            next_possible_daily.setHours(next_possible_daily.getHours() + 24)
+            // next_possible_daily.setHours(next_possible_daily.getHours() + 24)
         res.status(400).send({message: `Daily was already redeemed`, tryagain: next_possible_daily})
     }
 })

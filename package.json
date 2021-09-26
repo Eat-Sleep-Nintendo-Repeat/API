@@ -27,6 +27,7 @@
     "mongoose": "^5.13.5",
     "nanoid": "^3.1.23",
     "nodemailer": "^6.6.3",
-    "pdfkit": "^0.12.3"
+    "pdfkit": "^0.12.3",
+    "socket.io": "^4.2.0"
   }
 }

@@ -45,7 +45,7 @@ app.use("/auth", token_exchange)
 //session_token checker
 app.use("/", async (req, res, next) => {
   //check if Header is passed
-  if (!req.header("Authorization")) return res.status(401).send({"message": "unauthorized - missing access_token"})
+  if (!req.header("Authorization")) return res.status(401).send({"message": "unauthorized - missing auth token"})
 
   switch (req.header("Authorization").split(" ")[0]) {
     case "Access":
@@ -116,6 +116,9 @@ app.use("/warns", warns)
 // use-my-voice route
 const umv = require("./routes/api/usemyvoice/umv");
 app.use("/usemyvoice", umv)
+
+//socket.io
+require("./routes/socket/socketio")
 
 app.listen(7869, () => {
   console.log("API is active and listenig on 7869");
