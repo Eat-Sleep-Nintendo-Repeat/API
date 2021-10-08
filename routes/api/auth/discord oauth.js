@@ -77,13 +77,13 @@ app.get("/discord/callback", async (req, res) => {
         res.cookie("refresh_token", user_refresh_token, { expires: cookieexpire});
 
         //redirect user to the page if UI has set a redirect
-        if(req.query.state && req.query.state.toUpperCase("HTTP")) {
+        if(req.query.state && req.query.state.toUpperCase().startsWith("https")) {
            res.redirect(req.query.state)
         }
 
         //redirect user to UI Mainpage if UI didt set a redirect
         else {
-          res.redirect("/home")
+          res.redirect("https://ui.eat-sleep-nintendo-repeat.eu/")
         }
 
         //log channel
