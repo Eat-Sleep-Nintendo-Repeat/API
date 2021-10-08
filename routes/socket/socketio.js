@@ -102,6 +102,4 @@ io.on("connection", (socket) => {
     })
 })
 
-io.listen(411)
-
 module.exports = io;
