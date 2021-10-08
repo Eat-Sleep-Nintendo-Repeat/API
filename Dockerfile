@@ -22,10 +22,8 @@ COPY . .
 #TAEFIK CONFIG
 LABEL traefik.enable="true" \
       traefik.http.routers.esnr-api.entrypoints="websecure" \
-      traefik.http.routers.esnr-api.rule="Host(`eat-sleep-nintendo-repeat.eu`) && PathPrefix(`/api/v1`)" \
-      traefik.http.middlewares.esnr-api-stripprefix.stripprefix.prefixes="/api/v1" \
-      traefik.http.routers.esnr-api.middlewares="esnr-api-stripprefix" \
-      traefik.port="7871" \
+      traefik.http.routers.esnr-api.rule="Host(`api.eat-sleep-nintendo-repeat.eu`)" \
+      traefik.port="7869" \
       traefik.http.routers.esnr-api.tls.certresolver="letsencrypt"
 
 EXPOSE 7869
