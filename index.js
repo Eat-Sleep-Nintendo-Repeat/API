@@ -33,7 +33,7 @@ app.get('*', (req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS")
   res.setHeader("Access-Control-Allow-Headers", "authorization")
   next();
-  }
+}
 else {
   next();
 }})
@@ -65,6 +65,11 @@ app.use("/", async (req, res, next) => {
         //add token to req objekt
         req.user = token
         req.user.isuser = true
+
+        //set cors for ui
+        res.setHeader("Access-Control-Allow-Origin", "ui.eat-sleep-nintendo-repeat.eu")
+        res.setHeader("Access-Control-Allow-Methods", "*")
+        res.setHeader("Access-Control-Allow-Headers", "authorization")
 
         //forward request
         next();
