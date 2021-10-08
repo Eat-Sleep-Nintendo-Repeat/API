@@ -1,6 +1,7 @@
 const MEMBER = require("../../models/MEMBER")
 var jsw = require("jsonwebtoken")
 var config = require("../../config.json")
+var {io} = require("../../index")
 
 //event groups
 const EventGroups = [
@@ -9,11 +10,6 @@ const EventGroups = [
         mintype: 99
     }
 ]
-
-//create socket.io Server
-const io = require("socket.io")({
-    cors: {origin: "*"}
-})
 
 //handle authentication
 io.use(async (socket, next) => {

@@ -4,11 +4,18 @@ var jsw = require("jsonwebtoken")
 var config = require("./config.json")
 var bodyParser = require('body-parser')
 const MEMBER = require("./models/MEMBER")
+var http = require('http');
 
 
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json())
+
+var server = http.createServer(app);
+var io = require('socket.io')(server, {
+  cors: {origin: "*"}
+})
+exports.io = io
 
 //CORS Preflight request handler
 app.options('*', (req, res) => {
@@ -120,6 +127,6 @@ app.use("/usemyvoice", umv)
 //socket.io
 require("./routes/socket/socketio")
 
-app.listen(7869, () => {
+server.listen(7869, () => {
   console.log("API is active and listenig on 7869");
 });
