@@ -13,14 +13,14 @@ const EventGroups = [
 
 //handle authentication
 io.use(async (socket, next) => {
-    if (!socket.handshake.query || !socket.handshake.query.Authorization) return next(new Error('unauthorized - missing auth token'));
-        switch (socket.handshake.query.Authorization.split(" ")[0]) {
+    if (!socket.handshake.query || !socket.handshake.query.Authentication) return next(new Error('unauthorized - missing auth token'));
+        switch (socket.handshake.query.Authentication.split(" ")[0]) {
             case "Access":
                 //default access_token gererated by user authentication
 
                 //verifying token
                 //verifying token
-                await jsw.verify(socket.handshake.query.Authorization.split(" ")[1], config.key, (err, token) => {
+                await jsw.verify(socket.handshake.query.Authentication.split(" ")[1], config.key, (err, token) => {
                     if (err) return next(new Error('unauthorized - access_token is invalid'));
 
                     //add token to req objekt
@@ -36,11 +36,11 @@ io.use(async (socket, next) => {
                 //bot key
 
                 //verifying key 
-                var memberdb = await MEMBER.findOne({"dev_accounts.api_key": socket.handshake.query.Authorization.split(" ")[1]})
+                var memberdb = await MEMBER.findOne({"dev_accounts.api_key": socket.handshake.query.Authentication.split(" ")[1]})
 
                 if (!memberdb) return next(new Error('unauthorized - token is invalid'));
                 if (memberdb.oauth.blocking_state.is_blocked) return next(new Error('You are being blocked from accessing our API'));
-                var api_key = memberdb.dev_accounts.find(x => x.api_key === socket.handshake.query.Authorization.split(" ")[1])
+                var api_key = memberdb.dev_accounts.find(x => x.api_key === socket.handshake.query.Authentication.split(" ")[1])
 
                 socket.user = {
                     id: memberdb.id,

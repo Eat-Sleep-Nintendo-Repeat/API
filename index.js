@@ -13,7 +13,8 @@ app.use(bodyParser.json())
 
 var server = http.createServer(app);
 var io = require('socket.io')(server, {
-  cors: {origin: "*"}
+  cors: {origin: "*"},
+  path: "/api/socketio"
 })
 exports.io = io
 
