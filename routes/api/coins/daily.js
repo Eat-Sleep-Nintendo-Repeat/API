@@ -1,11 +1,13 @@
-const express = require("express");
 const MEMBER = require("../../../models/MEMBER")
 const typetoword = require("../../../modules/member_type_to_word")
 
-const api_route = express.Router();
+
+const express = require("express");
+
+const route = express.Router();
 
 //redeem daily
-api_route.post("/:userid/daily", async (req, res) => {
+route.post("/:userid/daily", async (req, res) => {
     //fetch database
     var memberdb = await MEMBER.findOne({id: req.params.userid})
     if (!memberdb) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
@@ -27,5 +29,4 @@ api_route.post("/:userid/daily", async (req, res) => {
         res.status(400).send({message: `Daily was already redeemed`, tryagain: next_possible_daily})
     }
 })
-
-module.exports = api_route;
+module.exports = route;
