@@ -28,8 +28,9 @@ const MemberSchema = mongoose.Schema({
   
   statistics: {},
   oauth: {
-    access_token: { default: null, type: String },
-    refresh_token: String,
+    e_access_token: { default: null, type: String },
+    e_refresh_token: String,
+    e_iv: Buffer,
     expire_date: Date,
     scopes: Array,
     redirect: String,
