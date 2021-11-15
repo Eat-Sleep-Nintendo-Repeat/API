@@ -29,7 +29,7 @@ route.put("/:id", async (req, res) => {
             if (req.body.cors === null)  member.dev_accounts[i].cors = null
 
             await MEMBER.findOneAndUpdate({id: sanitize(req.user.id)}, {"dev_accounts": member.dev_accounts});
-            return res.send(member.dev_accounts.map(x => ({
+            return res.json(member.dev_accounts.map(x => ({
                 id: x.id,
                 name: x.name,
                 creation_date: x.creation_date,

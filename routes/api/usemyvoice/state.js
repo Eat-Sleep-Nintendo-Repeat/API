@@ -13,7 +13,7 @@ route.get("/:userid", async  (req, res) => {
 
     if (!memberdb) return res.status(404).send({message: `Not Found - There is no Member with an ID of >${req.params.userid}<`})
 
-    res.send(memberdb.usemyvoice)
+    res.json(memberdb.usemyvoice)
 })
 
 module.exports = route;

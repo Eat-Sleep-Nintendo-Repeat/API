@@ -28,7 +28,7 @@ route.post("/", async (req, res) => {
     member.dev_accounts.push(key)
     await MEMBER.findOneAndUpdate({id: sanitize(req.user.id)}, {"dev_accounts": member.dev_accounts});
 
-    res.send(key)
+    res.json(key)
 })
 
 module.exports = route;

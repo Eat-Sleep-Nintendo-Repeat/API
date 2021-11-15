@@ -37,7 +37,7 @@ route.get("/:userid", async (req, res) => {
 
 
     }
-    res.send(responseobject)
+    res.json(responseobject)
 })
 
 module.exports = route;
