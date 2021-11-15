@@ -2,11 +2,12 @@ const MEMBER = require("../../../models/MEMBER")
 
 
 const express = require("express");
+const sanitize = require("mongo-sanitize");
 
 const route = express.Router();
 
 route.put("/:id", async (req, res) => {
-    var member = await MEMBER.findOne({id: req.user.id});
+    var member = await MEMBER.findOne({id: sanitize(req.user.id)});
 
     if (!member.dev_accounts.find(x => req.params.id === x.id)) return res.status(404).send({message: `There is no API_Key with an id of >${req.params.id}<`})
     
@@ -27,7 +28,7 @@ route.put("/:id", async (req, res) => {
             }
             if (req.body.cors === null)  member.dev_accounts[i].cors = null
 
-            await MEMBER.findOneAndUpdate({id: req.user.id}, {"dev_accounts": member.dev_accounts});
+            await MEMBER.findOneAndUpdate({id: sanitize(req.user.id)}, {"dev_accounts": member.dev_accounts});
             return res.send(member.dev_accounts.map(x => ({
                 id: x.id,
                 name: x.name,

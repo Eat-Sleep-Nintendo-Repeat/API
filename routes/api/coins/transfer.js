@@ -1,3 +1,4 @@
+var sanitize = require('mongo-sanitize');
 const MEMBER = require("../../../models/MEMBER")
 
 
@@ -17,7 +18,7 @@ route.put("/:userid", async (req, res) => {
     if (req.body.amount < 1) return res.status(400).send({message: `Bad Request - Amount musst be greater then 0`})
 
     //fetch members and make sure that all of them are returned from database
-    var memberdbs = await MEMBER.find({id: [req.params.userid, req.body.receiver]})
+    var memberdbs = await MEMBER.find({id: [req.params.userid, sanitize(req.body.receiver)]})
     if (memberdbs.length == 0) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}< and also not able to find a user with an id of >${req.body.receiver}<`})
     if (memberdbs.length < 2 && !memberdbs.find(x => x.id === req.params.userid)) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
     if (memberdbs.length < 2 && !memberdbs.find(x => x.id === req.body.receiver)) return res.status(400).send({message: `Bad Request - We were not able to find a user with id >${req.body.receiver}<`})
@@ -31,12 +32,12 @@ route.put("/:userid", async (req, res) => {
     payer.currencys.coins.amount = payer.currencys.coins.amount - req.body.amount
     payer.currencys.coins.log.push({"description": `überweisung an ${receiver.informations.name}#${receiver.informations.discriminator}`, "value": 0 - req.body.amount, "date": new Date()})
 
-    await MEMBER.findOneAndUpdate({id: payer.id}, {"currencys.coins.amount": payer.currencys.coins.amount, "currencys.coins.log": payer.currencys.coins.log})
+    await MEMBER.findOneAndUpdate({id: sanitize(payer.id)}, {"currencys.coins.amount": payer.currencys.coins.amount, "currencys.coins.log": payer.currencys.coins.log})
 
     //add coins to receiverdb 
     receiver.currencys.coins.amount = receiver.currencys.coins.amount + req.body.amount
     receiver.currencys.coins.log.push({"description": `überweisung von ${payer.informations.name}#${payer.informations.discriminator}`, "value": req.body.amount, "date": new Date()})
-    await MEMBER.findOneAndUpdate({id: receiver.id}, {"currencys.coins.amount": receiver.currencys.coins.amount, "currencys.coins.log": receiver.currencys.coins.log})
+    await MEMBER.findOneAndUpdate({id: sanitize(receiver.id)}, {"currencys.coins.amount": receiver.currencys.coins.amount, "currencys.coins.log": receiver.currencys.coins.log})
 
     res.send()
 

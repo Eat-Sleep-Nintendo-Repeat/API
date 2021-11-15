@@ -1,6 +1,7 @@
 var jsw = require("jsonwebtoken")
 var config = require("./config.json")
 const MEMBER = require("./models/MEMBER")
+var sanitize = require('mongo-sanitize');
 
 const express = require("express");
 
@@ -36,7 +37,7 @@ auth.use("/", async (req, res, next) => {
         //api key = probably a bot
   
         //verifying key
-        var memberdb = await MEMBER.findOne({"dev_accounts.api_key": req.header("Authentication").split(" ")[1]})
+        var memberdb = await MEMBER.findOne({"dev_accounts.api_key": sanitize(req.header("Authentication").split(" ")[1])})
   
   
         if (!memberdb) return res.status(401).send({"error": `unauthorized - api_key is invalid`})

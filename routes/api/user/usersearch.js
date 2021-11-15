@@ -2,6 +2,7 @@ const MEMBER = require("../../../models/MEMBER")
 const typetoword = require("../../../modules/member_type_to_word")
 
 const express = require("express");
+const sanitize = require("mongo-sanitize");
 
 const route = express.Router();
 
@@ -10,7 +11,7 @@ route.get("/", async (req, res) => {
     if (!req.query.id) return res.status(400).send({message: `Bad Request - Missing ID Query`})
 
     var ids = req.query.id.split(",")
-    var memberdb = await MEMBER.find({id: ids})
+    var memberdb = await MEMBER.find({id: sanitize(ids)})
 
     if (memberdb.length == 0) return res.status(404).send({message: `Not Found - We were not able to find a any users with one of the following ids: ${ids.join(", ")}`})
 

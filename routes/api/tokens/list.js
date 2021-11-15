@@ -2,11 +2,12 @@ const MEMBER = require("../../../models/MEMBER")
 
 
 const express = require("express");
+const sanitize = require("mongo-sanitize");
 
 const route = express.Router();
 
 route.get("/", async (req, res) => {
-    var member = await MEMBER.findOne({id: req.user.id});
+    var member = await MEMBER.findOne({id: sanitize(req.user.id)});
 
     return res.send(member.dev_accounts.map(x => ({
         id: x.id,

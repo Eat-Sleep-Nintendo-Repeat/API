@@ -4,6 +4,7 @@ const io = require("../../socket/socketio")
 
 
 const express = require("express");
+const sanitize = require("mongo-sanitize");
 
 const route = express.Router();
 
@@ -12,7 +13,7 @@ route.post("/", async  (req, res) => {
     if (!req.user.isuser) return res.status(400).send({message: "This API Route can only be used via the officiall UI"})
 
     //fetch iser from database
-    var memberdb = await MEMBER.findOne({id: req.user.id})
+    var memberdb = await MEMBER.findOne({id: sanitize(req.user.id)})
 
     if (!memberdb) return res.status(404).send({message: `Not Found - There is no Member with an ID of >${req.params.userid}<`})
     
@@ -37,7 +38,7 @@ route.post("/", async  (req, res) => {
     if (req.body.email && !memberdb.oauth.scopes.find(x => x === "email")) return res.status(400).send({message: "You did not gave us permission to send you emails :("})
 
     //save to database
-    await MEMBER.findOneAndUpdate({id: req.user.id}, {usemyvoice: {accepted: true, state: "accepted", signature: req.body.signature, date: new Date()}}, {new: true}).then(x => {
+    await MEMBER.findOneAndUpdate({id: sanitize(req.user.id)}, {usemyvoice: {accepted: true, state: "accepted", signature: req.body.signature, date: new Date()}}, {new: true}).then(x => {
         res.send(x.usemyvoice)
         io.emit("log", {color: "#EB459E", title: "Neue use my voice Einverständniss Erklärung!", fields: [{name: "User", value: memberdb.informations.name + "#" + memberdb.informations.discriminator, inline: true}, {name: "ID", value: memberdb.id, inline: true}, {name: "Signature", value: req.body.signature}]})
 

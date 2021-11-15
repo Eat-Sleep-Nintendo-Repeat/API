@@ -1,3 +1,4 @@
+var sanitize = require('mongo-sanitize');
 const MEMBER = require("../../../models/MEMBER")
 
 
@@ -6,7 +7,7 @@ const express = require("express");
 const route = express.Router();
 
 route.delete("/:id", async (req, res) => {
-    var member = await MEMBER.findOne({id: req.user.id});
+    var member = await MEMBER.findOne({id: sanitize(req.user.id)});
 
     if (!member.dev_accounts.find(x => req.params.id === x.id)) return res.status(404).send({message: `There is no API_Key with an id of >${req.params.id}<`})
     
@@ -18,7 +19,7 @@ route.delete("/:id", async (req, res) => {
     }
 
     //save new key object to database
-    await MEMBER.findOneAndUpdate({id: req.user.id}, {"dev_accounts": member.dev_accounts});
+    await MEMBER.findOneAndUpdate({id: sanitize(req.user.id)}, {"dev_accounts": member.dev_accounts});
     res.status(200).send("OK")
 
 })

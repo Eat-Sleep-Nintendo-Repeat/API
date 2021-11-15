@@ -1,5 +1,6 @@
 const express = require("express");
 const MEMBER = require("../../../models/MEMBER")
+var sanitize = require('mongo-sanitize');
 const typetoword = require("../../../modules/member_type_to_word")
 
 const api_route = express.Router();
@@ -7,7 +8,7 @@ const api_route = express.Router();
 //redeem daily
 api_route.post("/:userid/daily", async (req, res) => {
     //fetch database
-    var memberdb = await MEMBER.findOne({id: req.params.userid})
+    var memberdb = await MEMBER.findOne({id: sanitize(req.params.userid)})
     if (!memberdb) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
 
     var datenow = new Date()
@@ -18,7 +19,7 @@ api_route.post("/:userid/daily", async (req, res) => {
         newlog.push({"description": "daily coins", "value": 150, "date": datenow})
 
     
-        await MEMBER.findOneAndUpdate({"id": req.params.userid}, {"currencys.coins.amount": memberdb.currencys.coins.amount + 150, "currencys.coins.last_daily": datenow, "currencys.coins.log": newlog})
+        await MEMBER.findOneAndUpdate({"id": sanitize(req.params.userid)}, {"currencys.coins.amount": memberdb.currencys.coins.amount + 150, "currencys.coins.last_daily": datenow, "currencys.coins.log": newlog})
         res.send()
     }
     else {

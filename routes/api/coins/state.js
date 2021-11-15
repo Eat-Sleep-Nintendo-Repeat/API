@@ -1,4 +1,5 @@
 const MEMBER = require("../../../models/MEMBER")
+var sanitize = require('mongo-sanitize');
 const typetoword = require("../../../modules/member_type_to_word")
 
 
@@ -9,7 +10,7 @@ const route = express.Router();
 //Responses with coinstate Informations
 route.get("/:userid", async (req, res) => {
     //fetch database
-    var memberdb = await MEMBER.findOne({id: req.params.userid})
+    var memberdb = await MEMBER.findOne({id: sanitize(req.params.userid)})
 
     if (!memberdb) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
 
