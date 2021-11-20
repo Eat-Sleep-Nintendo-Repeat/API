@@ -70,7 +70,6 @@ io.use(async (socket, next) => {
 io.on("connection", (socket) => {
     //check every ten minutes if user is still allowed to use api
     var StillValidCheck = setInterval(async () => {
-        console.log("checking...")
     var memberdb = await MEMBER.findOne({"id": sanitize(socket.user.id)})
 
     if (memberdb.oauth.blocking_state.is_blocked === true) io.in(socket.id).disconnectSockets();
