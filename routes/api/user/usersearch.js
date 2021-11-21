@@ -21,7 +21,7 @@ route.get("/", async (req, res) => {
         //return users by search query
         var dbquery = {}
         if (req.query.id) {dbquery.id = new RegExp(req.query.id, "i")};
-        if (req.query.username) {dbquery["informations.name"] = new RegExp(req.query.username, "g")}
+        if (req.query.username) {dbquery["informations.name"] = new RegExp(req.query.username, "i")}
         if (req.query.discriminator) {dbquery["informations.discriminator"] = new RegExp(req.query.discriminator, "g")}
         if (req.query.type) {dbquery["type"] = req.query.type}
         if (req.query.serverbooster) {dbquery["serverbooster"] = req.query.serverbooster}
