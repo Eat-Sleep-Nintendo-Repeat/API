@@ -131,16 +131,25 @@ curl https://eat-sleep-nintendo-repeat.eu/api/users/330380702505762817 \
 ```
 
 # GET /users
-returns infotmations about several users
+Searches the database for users based on the search query **OR** returns more users when the "ids" field is provided
 
 ### Data to be passed
-| Query | Details                                     |
-|-------|---------------------------------------------|
-| id (!)| Multiple Discord User IDs split by comma    |
+| Query            | Details                                       |
+|------------------|-----------------------------------------------|
+| id               | The Discord id name or parts of it            |
+| username         | The Discord user name or parts of it          |
+| discriminator    | The Discord user discriminator or parts of it |
+| type             | The permission type number                    |
+| serverbooster    | A boolen if the user is booster or not        |
+
+**OR**
+| Query            | Details                                       |
+|------------------|-----------------------------------------------|
+| ids              | The Discord ids of up to 50 users sperteated with comma (,)            |
 
 ### CURL example
 ```
-curl https://eat-sleep-nintendo-repeat.eu/api/users?id=330380702505762817,874605952865820733,500658624109084682 \
+curl https://eat-sleep-nintendo-repeat.eu/api/users?username=Du&discriminator=69&serverbooster=true \
      -H "Authentication: Token <your API Key>"
 
 ```
@@ -150,19 +159,40 @@ curl https://eat-sleep-nintendo-repeat.eu/api/users?id=330380702505762817,874605
 [{
     "id": "330380702505762817",
     "username": "Dustin_DM",
-    "discriminator": "0254",
-    "avatar": "7eff755160b75f4bfb83c4fed8902530",
+    "discriminator": "0069",
+    "avatar": "bc548c94ed275b3cabce2ee8cbcb1583",
     "type": 99,
     "typeword": "Admin",
     "serverbooster": true
-}, {
-    "id": "500658624109084682",
-    "username": "Emoji.gg",
-    "discriminator": "7083",
-    "avatar": "ba681df494b10a6fee894562aac5199b",
-    "type": 50,
-    "typeword": "Bot",
+}]
+```
+
+**OR**
+### CURL example 2
+```
+curl https://eat-sleep-nintendo-repeat.eu/api/users?ids=330380702505762817,874605952865820733,419227063652974592 \
+     -H "Authentication: Token <your API Key>"
+
+```
+
+### Response 2
+```json
+[{
+    "id": "419227063652974592",
+    "username": "Vlasdor",
+    "discriminator": "3248",
+    "avatar": "f715fd98aba905eb5f228d173aa658af",
+    "type": 99,
+    "typeword": "Admin",
     "serverbooster": false
+}, {
+    "id": "330380702505762817",
+    "username": "Dustin_DM",
+    "discriminator": "0069",
+    "avatar": "bc548c94ed275b3cabce2ee8cbcb1583",
+    "type": 99,
+    "typeword": "Admin",
+    "serverbooster": true
 }, {
     "id": "874605952865820733",
     "username": "Eat, Sleep, Bot v3",

@@ -8,15 +8,31 @@ const route = express.Router();
 
 //responses with informations of users that are definded by id in querys
 route.get("/", async (req, res) => {
-    if (!req.query.id) return res.status(400).send({message: `Bad Request - Missing ID Query`})
+    if (req.query.ids) {
+        //return several users by ids
+        var ids = req.query.ids.split(",")
+        if (ids > 50) return res.status(400).send({error: "not allowed to request more then 50 users per call"})
+        var memberdb = await MEMBER.find({id: sanitize(ids)})
 
-    var ids = req.query.id.split(",")
-    var memberdb = await MEMBER.find({id: sanitize(ids)})
+        res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {})) 
+    }
 
-    if (memberdb.length == 0) return res.status(404).send({message: `Not Found - We were not able to find a any users with one of the following ids: ${ids.join(", ")}`})
+    else {
+        //return users by search query
+        var dbquery = {}
+        if (req.query.id) {dbquery.id = new RegExp(req.query.id, "i")};
+        if (req.query.username) {dbquery["informations.name"] = new RegExp(req.query.username, "g")}
+        if (req.query.discriminator) {dbquery["informations.discriminator"] = new RegExp(req.query.discriminator, "g")}
+        if (req.query.type) {dbquery["type"] = req.query.type}
+        if (req.query.serverbooster) {dbquery["serverbooster"] = req.query.serverbooster}
 
+        await MEMBER.find(sanitize(dbquery)).then(memberdb => {
+            res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {}))
+        }).catch(e => {
+            return res.status(400).send({error: "invalid format"})
+        })
+    }
 
-    res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {}))
 })
 
 module.exports = route;
