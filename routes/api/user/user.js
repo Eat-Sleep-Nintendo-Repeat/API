@@ -26,9 +26,9 @@ route.get("/:userid", async (req, res) => {
                 xp: memberdb.currencys.ranks.xp
             },
             
-            coins: {
-                amount: memberdb.currencys.coins.amount,
-                log: memberdb.currencys.coins.log.reverse().slice(0, 3)
+            gems: {
+                amount: memberdb.currencys.gems.amount,
+                log: memberdb.currencys.gems.log.reverse().slice(0, 3)
             }, 
         },
 
