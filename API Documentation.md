@@ -16,7 +16,7 @@
 	* [Supported Formats](#formats)
 * Methods
 	* [Users](#users)
-	* [Coins](#coins)
+	* [Gems](#gems)
 	* [Warns](#warns)
 
 ## The Basics
@@ -59,7 +59,6 @@ Therefore, it is not necessary to specify the format.
 <br>
 
 # Methoden
-
 
 # <a name="users"></a>GET /users/@me
 returns user that belongs to Authentication token
@@ -108,14 +107,14 @@ curl https://eat-sleep-nintendo-repeat.eu/api/users/330380702505762817 \
             "rank": 135,
             "xp": 230
         },
-        "coins": {
+        "gems": {
             "amount": 64881,
             "log": [{
                 "description": "Disboard Bump",
                 "value": 300,
                 "date": "2021-08-27T20:13:02.376Z"
             }, {
-                "description": "daily coins",
+                "description": "daily gems",
                 "value": 150,
                 "date": "2021-08-27T20:12:58.105Z"
             }, {
@@ -251,15 +250,15 @@ curl https://eat-sleep-nintendo-repeat.eu/api/users/toplist?max=3 \
 }]
 ```
 
-# <a name="coins"></a> GET /coins/:DiscordUserId
-returns informations about the coins state of a user
+# <a name="gems"></a> GET /gems/:DiscordUserId
+returns informations about the gems state of a user
 
 ### Authorization notes
-<p style="color:yellow"> No permissions are required to query your own coins. For querying the coins of other users, a permission value of 50 or higher is required! <p>
+<p style="color:yellow"> No permissions are required to query your own gems. For querying the gems of other users, a permission value of 50 or higher is required! <p>
 
 ### CURL example
 ```
-curl https://eat-sleep-nintendo-repeat.eu/api/coins/330380702505762817 \
+curl https://eat-sleep-nintendo-repeat.eu/api/gems/330380702505762817 \
      -H "Authentication: Token <your API Key>"
 
 ```
@@ -276,10 +275,10 @@ curl https://eat-sleep-nintendo-repeat.eu/api/coins/330380702505762817 \
         "typeword": "Admin",
         "booster": true
     },
-    "coindata": {
+    "gemdata": {
         "amount": 65630,
         "log": [{
-            "description": "daily coins",
+            "description": "daily gems",
             "value": 150,
             "date": "2021-03-11T21:17:41.551Z"
         }],
@@ -294,21 +293,21 @@ curl https://eat-sleep-nintendo-repeat.eu/api/coins/330380702505762817 \
 }
 ```
 
-# PUT /coins/:DiscordUserId
-Transfers coins to a different user
+# PUT /gems/:DiscordUserId
+Transfers gems to a different user
 
 ### Authorization notes
-<p style="color:yellow">No permissions are required to transfer your own coins to an other user. To transfer the coins of other users, a permission value of 50 or higher is required!</p>
+<p style="color:yellow">No permissions are required to transfer your own gems to an other user. To transfer the gems of other users, a permission value of 50 or higher is required!</p>
 
 ### Data to be passed
 | json body            | Details |
 |----------------------|---------|
-| receiver (String)(!) | The ID of a Discord user who should receive the coins |
-| amount (Intiger)(!)  | The number of coins to be transferred |
+| receiver (String)(!) | The ID of a Discord user who should receive the gems |
+| amount (Intiger)(!)  | The number of gems to be transferred |
 
 ### CURL example
 ```
-curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/coins/330380702505762817 \
+curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/gems/330380702505762817 \
      -H "Authentication: Token <your API Key>" \
      -d "{\"receiver\": \"874605952865820733\", \"amount\": 1}"
 
@@ -318,7 +317,7 @@ curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/coins/330380702505762817 \
 ```json
 ```
 
-# POST /coins/:DiscordUserId/daily
+# POST /gems/:DiscordUserId/daily
 Redeems the daily reward
 
 ### Authorization notes
@@ -326,7 +325,7 @@ Redeems the daily reward
 
 ### CURL example
 ```
-curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/coins/330380702505762817/daily \
+curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/gems/330380702505762817/daily \
      -H "Authentication: Token <your API Key>"
 
 ```
