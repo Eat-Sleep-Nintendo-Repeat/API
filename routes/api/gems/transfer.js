@@ -6,7 +6,7 @@ const express = require("express");
 
 const route = express.Router();
 
-//Transfer Coins to another user
+//Transfer gems to another user
 route.put("/:userid", async (req, res) => {
     // if (!memberdb) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
     
@@ -23,21 +23,21 @@ route.put("/:userid", async (req, res) => {
     if (memberdbs.length < 2 && !memberdbs.find(x => x.id === req.params.userid)) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
     if (memberdbs.length < 2 && !memberdbs.find(x => x.id === req.body.receiver)) return res.status(400).send({message: `Bad Request - We were not able to find a user with id >${req.body.receiver}<`})
 
-    //remove coins from senderdb
+    //remove gems from senderdb
     req.body.amount = Math.round(req.body.amount)
     var receiver = memberdbs.find(x => x.id === req.body.receiver)
     var payer = memberdbs.find(x => x.id === req.params.userid)
 
-    if (payer.currencys.coins.amount < req.body.amount) return res.status(400).send({message: `Bad Request - You have not enough coins to comppete this operation`})
-    payer.currencys.coins.amount = payer.currencys.coins.amount - req.body.amount
-    payer.currencys.coins.log.push({"description": `überweisung an ${receiver.informations.name}#${receiver.informations.discriminator}`, "value": 0 - req.body.amount, "date": new Date()})
+    if (payer.currencys.gems.amount < req.body.amount) return res.status(400).send({message: `Bad Request - You have not enough gems to comppete this operation`})
+    payer.currencys.gems.amount = payer.currencys.gems.amount - req.body.amount
+    payer.currencys.gems.log.push({"description": `überweisung an ${receiver.informations.name}#${receiver.informations.discriminator}`, "value": 0 - req.body.amount, "date": new Date()})
 
-    await MEMBER.findOneAndUpdate({id: sanitize(payer.id)}, {"currencys.coins.amount": payer.currencys.coins.amount, "currencys.coins.log": payer.currencys.coins.log})
+    await MEMBER.findOneAndUpdate({id: sanitize(payer.id)}, {"currencys.gems.amount": payer.currencys.gems.amount, "currencys.gems.log": payer.currencys.gems.log})
 
-    //add coins to receiverdb 
-    receiver.currencys.coins.amount = receiver.currencys.coins.amount + req.body.amount
-    receiver.currencys.coins.log.push({"description": `überweisung von ${payer.informations.name}#${payer.informations.discriminator}`, "value": req.body.amount, "date": new Date()})
-    await MEMBER.findOneAndUpdate({id: sanitize(receiver.id)}, {"currencys.coins.amount": receiver.currencys.coins.amount, "currencys.coins.log": receiver.currencys.coins.log})
+    //add gems to receiverdb 
+    receiver.currencys.gems.amount = receiver.currencys.gems.amount + req.body.amount
+    receiver.currencys.gems.log.push({"description": `überweisung von ${payer.informations.name}#${payer.informations.discriminator}`, "value": req.body.amount, "date": new Date()})
+    await MEMBER.findOneAndUpdate({id: sanitize(receiver.id)}, {"currencys.gems.amount": receiver.currencys.gems.amount, "currencys.gems.log": receiver.currencys.gems.log})
 
     res.send()
 

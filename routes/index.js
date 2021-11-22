@@ -4,7 +4,7 @@ const routes = express.Router();
 
 routes.use("/users", require("./api/user/_index"))
 
-routes.use("/coins", require("./api/coins/_index"))
+routes.use("/gems", require("./api/gems/_index"))
 
 routes.use("/usemyvoice", require("./api/usemyvoice/_index"))
 

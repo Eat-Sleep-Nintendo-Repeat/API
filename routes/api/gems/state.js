@@ -7,7 +7,7 @@ const express = require("express");
 
 const route = express.Router();
 
-//Responses with coinstate Informations
+//Responses with gemstate Informations
 route.get("/:userid", async (req, res) => {
     //fetch database
     var memberdb = await MEMBER.findOne({id: sanitizeDB(req.params.userid)})
@@ -24,7 +24,7 @@ route.get("/:userid", async (req, res) => {
             typeword: typetoword(memberdb.type),
             booster: memberdb.serverbooster
         },
-        coindata: memberdb.currencys.coins 
+        gemdata: memberdb.currencys.gems 
     }
 
     res.json(returningobject)

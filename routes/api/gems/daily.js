@@ -14,14 +14,14 @@ route.post("/:userid/daily", async (req, res) => {
     if (!memberdb) return res.status(404).send({message: `Not Found - We were not able to find a user with id >${req.params.userid}<`})
 
     var datenow = new Date()
-    var last_daily = memberdb.currencys.coins.last_daily
-    if (last_daily == null || memberdb.currencys.coins.last_daily.setHours(last_daily.getHours() + 24) < datenow){
+    var last_daily = memberdb.currencys.gems.last_daily
+    if (last_daily == null || memberdb.currencys.gems.last_daily.setHours(last_daily.getHours() + 24) < datenow){
         //last daily was redeemed 24 Hours ago or was never redeemed before
-        var newlog = memberdb.currencys.coins.log
-        newlog.push({"description": "daily coins", "value": 150, "date": datenow})
+        var newlog = memberdb.currencys.gems.log
+        newlog.push({"description": "daily gems", "value": 150, "date": datenow})
 
     
-        await MEMBER.findOneAndUpdate({"id": sanitize(req.params.userid)}, {"currencys.coins.amount": memberdb.currencys.coins.amount + 150, "currencys.coins.last_daily": datenow, "currencys.coins.log": newlog})
+        await MEMBER.findOneAndUpdate({"id": sanitize(req.params.userid)}, {"currencys.gems.amount": memberdb.currencys.gems.amount + 150, "currencys.gems.last_daily": datenow, "currencys.gems.log": newlog})
         res.send()
     }
     else {

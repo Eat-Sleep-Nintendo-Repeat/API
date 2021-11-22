@@ -24,6 +24,18 @@ const MemberSchema = mongoose.Schema({
       ],
       last_daily: { type: Date, default: null },
     },
+    gems: {
+      amount: { type: Number, default: 300 },
+      log: Array,
+      purchases: [
+        {
+          id: Number,
+          date: { type: Date, default: new Date() },
+          active: { type: Boolean, default: true },
+        },
+      ],
+      last_daily: { type: Date, default: null },
+    },
   },
   
   statistics: {},
