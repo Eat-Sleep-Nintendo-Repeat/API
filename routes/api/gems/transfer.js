@@ -12,10 +12,10 @@ route.put("/:userid", async (req, res) => {
     
     //check providet data
     if (req.body.receiver === undefined) return res.status(400).send({message: `Bad Request - Missing receiver in json body`})
-    if (req.body.receiver == req.params.userid) return res.status(400).send({message: `Bad Request - Receiver can not be the same as ${req.params.userid}`})
+    if (req.body.receiver == req.params.userid) return res.status(400).send({message: `Bad Request - Receiver can not be the same as you (${req.params.userid})`})
     if (req.body.amount === undefined) return res.status(400).send({message: `Bad Request - Missing amount in json body`})
     if (isNaN(req.body.amount)) return res.status(400).send({message: `Bad Request - Amount must be an int that is greater then 0`})
-    if (req.body.amount < 1) return res.status(400).send({message: `Bad Request - Amount musst be greater then 0`})
+    if (req.body.amount < 1) return res.status(400).send({message: `Bad Request - Amount must be greater then 0`})
 
     //fetch members and make sure that all of them are returned from database
     var memberdbs = await MEMBER.find({id: [req.params.userid, sanitize(req.body.receiver)]})
@@ -28,7 +28,7 @@ route.put("/:userid", async (req, res) => {
     var receiver = memberdbs.find(x => x.id === req.body.receiver)
     var payer = memberdbs.find(x => x.id === req.params.userid)
 
-    if (payer.currencys.gems.amount < req.body.amount) return res.status(400).send({message: `Bad Request - You have not enough gems to comppete this operation`})
+    if (payer.currencys.gems.amount < req.body.amount) return res.status(400).send({message: `Bad Request - You have not enough gems to complete this operation`})
     payer.currencys.gems.amount = payer.currencys.gems.amount - req.body.amount
     payer.currencys.gems.log.push({"description": `überweisung an ${receiver.informations.name}#${receiver.informations.discriminator}`, "value": 0 - req.body.amount, "date": new Date()})
 
