@@ -102,6 +102,7 @@ curl https://eat-sleep-nintendo-repeat.eu/api/users/330380702505762817 \
     "avatar": "7eff755160b75f4bfb83c4fed8902530",
     "type": 99,
     "typeword": "Admin",
+    "page_private": false,
     "serverbooster": true,
     "currencys": {
         "ranks": {

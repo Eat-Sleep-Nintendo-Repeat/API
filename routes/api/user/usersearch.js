@@ -27,7 +27,7 @@ route.get("/", async (req, res) => {
         if (req.query.serverbooster) {dbquery["serverbooster"] = req.query.serverbooster}
 
         await MEMBER.find(sanitize(dbquery)).then(memberdb => {
-            res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type),  "serverbooster": x.serverbooster}: {}))
+            res.send(memberdb.map(x => true ? {"id": x.id, "username": x.informations.name, "discriminator": x.informations.discriminator, "avatar": x.informations.avatar, "type": x.type, "typeword": typetoword(x.type), "serverbooster": x.serverbooster}: {}))
         }).catch(e => {
             return res.status(400).send({error: "invalid format"})
         })
