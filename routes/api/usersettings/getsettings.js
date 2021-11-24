@@ -10,7 +10,7 @@ route.get("/", async (req, res) => {
     //fetch usersettings
     var member = await MEMBER.findOne({"id": sanitize(req.user.id)});
 
-    res.send(member.settings)
+    res.json(member.settings)
 })
 
 module.exports = route;

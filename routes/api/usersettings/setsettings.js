@@ -12,7 +12,7 @@ route.post("/", async (req, res) => {
         res.send({})
     }).catch(e => {
         console.log(e);
-        res.status(400).send({error: "The Input of your request is not correct"})
+        res.status(400).json({error: "The Input of your request is not correct"})
     })
 
     
