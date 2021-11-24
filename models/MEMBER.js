@@ -54,7 +54,7 @@ const MemberSchema = mongoose.Schema({
 
   settings: {
     levelup_notify: {type: Boolean, default: false},
-    page_private: {type: Boolean, default: false}
+    page_private: {type: Boolean, default: false},
   },
 
   dev_accounts: {type: Array, default: []},
