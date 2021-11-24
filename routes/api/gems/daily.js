@@ -22,7 +22,7 @@ route.post("/:userid/daily", async (req, res) => {
 
     
         await MEMBER.findOneAndUpdate({"id": sanitize(req.params.userid)}, {"currencys.gems.amount": memberdb.currencys.gems.amount + 150, "currencys.gems.last_daily": datenow, "currencys.gems.log": newlog})
-        res.send()
+        res.send({})
     }
     else {
         var next_possible_daily = last_daily

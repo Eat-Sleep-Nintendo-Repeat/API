@@ -39,7 +39,7 @@ route.put("/:userid", async (req, res) => {
     receiver.currencys.gems.log.push({"description": `überweisung von ${payer.informations.name}#${payer.informations.discriminator}`, "value": req.body.amount, "date": new Date()})
     await MEMBER.findOneAndUpdate({id: sanitize(receiver.id)}, {"currencys.gems.amount": receiver.currencys.gems.amount, "currencys.gems.log": receiver.currencys.gems.log})
 
-    res.send()
+    res.send({})
 
 
 

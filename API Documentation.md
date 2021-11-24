@@ -18,6 +18,7 @@
 	* [Users](#users)
 	* [Gems](#gems)
 	* [Warns](#warns)
+	* [Settings](#settings)
 
 ## The Basics
 ### <a name="basicurl"></a> basis URL
@@ -315,6 +316,7 @@ curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/gems/330380702505762817 \
 
 ### Response
 ```json
+{}
 ```
 
 # POST /gems/:DiscordUserId/daily
@@ -332,6 +334,7 @@ curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/gems/330380702505762817/dai
 
 ### Response
 ```json
+{}
 ```
 
 # <a name="warns"></a> GET /warns
@@ -365,4 +368,35 @@ curl https://eat-sleep-nintendo-repeat.eu/api/warns?id=363351055599140864 \
     },
     "__v": 0
 }]
+```
+
+# <a name="settings"></a> GET /settings
+returns the settings of the user who is making the request
+
+### CURL example
+```
+curl https://eat-sleep-nintendo-repeat.eu/api/gsettings \
+     -H "Authentication: Token <your API Key>"
+
+```
+
+### Response
+```json
+{"levelup_notify":true, "page_private":false}
+```
+
+# POST /settings
+posts settings to the database
+
+### CURL example
+```
+curl -X POST https://eat-sleep-nintendo-repeat.eu/api/gsettings \
+     -H "Authentication: Token <your API Key>" \
+     -d "{\"page_private\":false}"
+
+```
+
+### Response
+```json
+{}
 ```

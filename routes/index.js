@@ -12,5 +12,8 @@ routes.use("/warns",  require("./api/warns/_index"))
 
 routes.use("/tokens",  require("./api/tokens/_index"))
 
+routes.use("/settings",  require("./api/usersettings/_index"))
+
+
 
 module.exports = routes;
