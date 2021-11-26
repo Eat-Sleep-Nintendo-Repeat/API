@@ -401,3 +401,23 @@ curl -X POST https://eat-sleep-nintendo-repeat.eu/api/gsettings \
 ```json
 {}
 ```
+
+# <a name="uptime"></a> GET /uptime
+returns a list of all services that are reported as offline by [UptimeRobot](https://stats.uptimerobot.com/NE4p1U0Bxw)
+
+### CURL example
+```
+curl https://eat-sleep-nintendo-repeat.eu/api/uptime \
+     -H "Authentication: Token <your API Key>"
+
+```
+
+### Response
+```json
+[{
+    "offline": [{
+        "name": "API",
+        "id": 789870714
+    }]
+}]
+```

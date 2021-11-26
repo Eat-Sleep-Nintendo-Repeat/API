@@ -14,6 +14,9 @@ routes.use("/tokens",  require("./api/tokens/_index"))
 
 routes.use("/settings",  require("./api/usersettings/_index"))
 
+routes.use("/uptime",  require("./api/uptime/_index"))
+
+
 
 
 module.exports = routes;
