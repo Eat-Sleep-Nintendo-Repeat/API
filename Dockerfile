@@ -23,8 +23,6 @@ COPY . .
 LABEL traefik.enable="true" \
       traefik.http.routers.esnr-api.entrypoints="websecure" \
       traefik.http.routers.esnr-api.rule="Host(`eat-sleep-nintendo-repeat.eu`) && PathPrefix(`/api`)" \
-      traefik.http.middlewares.esnr-api-stripprefix.stripprefix.prefixes="/api" \
-      traefik.http.routers.esnr-api.middlewares="esnr-api-stripprefix" \
       traefik.port="7869" \
       traefik.http.routers.esnr-api.tls.certresolver="letsencrypt"
 
