@@ -30,7 +30,7 @@ exports.sendmail = (memberdb, mail) => {
     doc.font("bold").fontSize(15).text(`Widerruf:`, {lineGap: -10})
     doc.font("regular").fontSize(13).text(`Ein Widerruf kann jederzeit und mit sofortiger Wirkung für die Zukunft erfolgen. Dieser ist auf folgenden Wegen einzureichen:`, {lineGap: -10})
     doc.list([
-    `Email: public@dustin-dm.de`,
+    `Email: support@eat-sleep-nintendo-repeat.eu`,
     `Über das Webinterface über das die Einverständniserklärung akzeptiert wurde`
     ], {bulletRadius: 3})
     doc.text("\n")
@@ -55,10 +55,10 @@ exports.sendmail = (memberdb, mail) => {
 var transporter = nodemailer.createTransport(config.emailservice);
 
   var mailOptions = {
-    from: `"Eat, Sleep, Nintendo, Repeat" <Eat-Sleep-Nintendo-Repeat@dustin-dm.de>`,
+    from: `"Eat, Sleep, Nintendo, Repeat" <${config.emailservice.auth.user}>`,
     to: mail,
     subject: 'Einverständniserklärung zur Nutzung von Stimmenaufnahmen',
-    html: `<p>Hey ${memberdb.informations.name}! In den Anhängen dieser Email findest du die von dir akzeptierte Einverständniserklärung zur Nutzung von Stimmenaufnahmen. Diese Email wurde dir geschickt da du beim Prozzess der Einwilligung um eine Email mit der Kopie gebeten hattest. Falls du ein Interesse daran hast, die Einverständniserklärung zu widerrufen, dann solltest du das angehangene PDF aufbewahren. Falls nicht läuft die Einverständniserklärung ab ${new Date().getFullYear() + 1} sowieso ab.</p>`,
+    html: `<p>Hey ${memberdb.informations.name}! In den Anhängen dieser Email findest du die von dir akzeptierte Einverständniserklärung zur Nutzung von Stimmenaufnahmen. Diese Email wurde dir geschickt, da du beim Prozzess der Einwilligung um eine Email mit der Kopie gebeten hattest. In der angehangenen PFD findest du alle Infos zur Vereinbarung.</p>`,
     attachments: [
       {
       filename: 'Einverständniserklärung.pdf',
