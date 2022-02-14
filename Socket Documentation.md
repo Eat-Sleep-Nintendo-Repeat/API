@@ -53,7 +53,10 @@ Once you have a CORS API key you can manage its CORS header in your usersettings
 <br>
 <br>
 
-# Event Groups
+
+# <a name="logevent"></a> The "log" Event
+The Log Event is called by the API to send your client informations about things like room joining and leaving and also error messages
+
 ## <a name="eventgroups"></a> About Event Groups
 Event groups are accessible rooms where you can get live updates on specific topics. For example, when a user has a new rank or when the status of a tournament changes. This way you and your service can react to certain things immediately when something changes at Eat, Sleep, Nintendo, Repeat.
 
@@ -65,7 +68,6 @@ socket.on("connect", () => {
     socket.emit("join", {EventGroup: "system"})
 })
 ```
-You will not get a response from the Server that tells you if it worked or not.
 
 ## How to leave a Event Group?
 Just emit a "leave" Event and add the Event Group you want to leave as a String in the body. Based on the client you are using it can look like this:
@@ -73,9 +75,8 @@ Just emit a "leave" Event and add the Event Group you want to leave as a String 
 ```
     socket.emit("leave", {EventGroup: "system"})
 ```
-You will not get a response from the Server that tells you if it worked or not.
-
 <br>
 <br>
 
 # <a name="eventgrouplist"></a> List of Event Groups:
+* system (used for communication between api and discord bot. required permission_level: 99)

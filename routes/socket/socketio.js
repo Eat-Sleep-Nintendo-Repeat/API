@@ -4,6 +4,10 @@ var config = require("../../config.json")
 var {io} = require("../../index")
 const sanitize = require("mongo-sanitize")
 
+const EventEmitter = require('events');
+class Emitter extends EventEmitter {}
+io.emitter = new Emitter();
+
 //event groups
 const EventGroups = [
     {
@@ -75,6 +79,9 @@ io.on("connection", (socket) => {
     if (memberdb.oauth.blocking_state.is_blocked === true) io.in(socket.id).disconnectSockets();
     }, 600000)
 
+    //adds user to his own log room
+    socket.join("log_" + socket.user.id)
+
     socket.on("disconnect", () => {
         //ends StillValidCheck Interval when connection ends
         clearInterval(StillValidCheck)
@@ -82,24 +89,41 @@ io.on("connection", (socket) => {
 
     //allows connected clients to join an event group
     socket.on("join", data => {
-        if (!data.EventGroup) return;
+        if (!data.EventGroup) return socket.to(`log_${socket.user.id}`).emit("log", {error: `Missing Argument`});
 
        //search for requestest event group
-        if (!EventGroups.find(x => x.name === data.EventGroup.split(" ")[0])) return;
-        if (EventGroups.find(x => x.name === data.EventGroup.split(" ")[0]).mintype > socket.user.type) return;
+        if (!EventGroups.find(x => x.name === data.EventGroup.split(" ")[0])) return socket.to(`log_${socket.user.id}`).emit("log", {error: `There is no Event Group called ${data.EventGroup}`});
+        if (EventGroups.find(x => x.name === data.EventGroup.split(" ")[0]).mintype > socket.user.type) return socket.to(`log_${socket.user.id}`).emit("log", {error: `You dont have enough permissions to access ${data.EventGroup}`});
 
         socket.join(data.EventGroup)
+
+        //Send join confirmation
+        ssocket.to(`log_${socket.user.id}`).emit("log", {message: `successfully joined ${data.EventGroup}`})
     })
 
     //allows connected clients to leave an event group
     socket.on("leave", data => {
-        if (!data.EventGroup) return;
+        if (!data.EventGroup) return socket.to(`log_${socket.user.id}`).emit("log", {error: `Missing Argument`});
 
        //search for requestest event group
-        if (!EventGroups.find(x => x.name === data.EventGroup.split(" ")[0])) return;
+        if (!EventGroups.find(x => x.name === data.EventGroup.split(" ")[0])) return socket.to(`log_${socket.user.id}`).emit("log", {error: `There is no Event Group called ${data.EventGroup}`});
 
         socket.leave(data.EventGroup)
     })
+
+
+
+    var onevent = socket.onevent;
+    socket.onevent = function (packet) {
+        var args = packet.data || [];
+        onevent.call (this, packet);    // original call
+        packet.data = ["*"].concat(args);
+        onevent.call(this, packet);      // additional call to catch-all
+    };
+
+    socket.on("*",function(event,data) {
+        io.emitter.emit(event, data);
+    });
 })
 
 module.exports = io;
