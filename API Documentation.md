@@ -17,8 +17,10 @@
 * Methods
 	* [Users](#users)
 	* [Gems](#gems)
+	* [Shop](#shop)
 	* [Warns](#warns)
 	* [Settings](#settings)
+	* [Uptime](#uptime)
 
 ## The Basics
 ### <a name="basicurl"></a> basis URL
@@ -336,6 +338,88 @@ curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/gems/330380702505762817/dai
 ### Response
 ```json
 {}
+```
+
+# <a name="shop"></a> GET /shop
+Returns a list of shop items that can be bought, sorted by category.
+
+### CURL example
+```
+curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/shop \
+     -H "Authentication: Token <your API Key>"
+```
+
+### Response
+```json
+{[{
+    "categorie": "colour",
+    "items": [{
+        "name": "Farbe - Blau",
+        "description": "Blau Farbe für Discord",
+        "id": 4,
+        "amount": 650
+    }, {
+        "name": "Farbe - Grün",
+        "description": "Grüne Farbe für Discord",
+        "id": 2,
+        "amount": 650
+    }]
+}, {
+    "categorie": "permission",
+    "items": [{
+        "name": "EX Emoji",
+        "description": "Gibt dir die Permission serverexterne Emojis zu benutzen",
+        "id": 5,
+        "amount": 500
+    }, {
+        "name": "EX Threads",
+        "description": "Gibt dir die Permission globale und private Threads zu erstellen.",
+        "id": 8,
+        "amount": 1000
+    }]
+}]}
+```
+
+
+
+
+
+# GET /shop/purchased
+Returns a list of your purchased shop items, sorted by category.
+
+### CURL example
+```
+curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/shop/purchased \
+     -H "Authentication: Token <your API Key>"
+```
+
+### Response
+```json
+[{
+    "categorie": "permission",
+    "items": [{
+        "name": "EX Threads",
+        "description": "Gibt dir die Permission globale und private Threads zu erstellen.",
+        "id": 8,
+        "active": true,
+        "date": "2021-07-28T19:29:19.339Z"
+    }]
+}, {
+    "categorie": "colour",
+    "items": [{
+        "name": "Farbe - Gelb",
+        "description": "Gelbe Farbe für Discord",
+        "id": 1,
+        "active": true,
+        "date": "2022-02-14T17:51:52.004Z"
+    }, {
+        "name": "Farbe - Rot",
+        "description": "Rote Farbe für Discord",
+        "id": 3,
+        "active": false,
+        "date": "2022-02-14T18:48:16.861Z"
+    }]
+}]
 ```
 
 # <a name="warns"></a> GET /warns
