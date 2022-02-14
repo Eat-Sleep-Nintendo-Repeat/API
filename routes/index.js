@@ -16,4 +16,7 @@ routes.use("/settings",  require("./api/usersettings/_index"))
 
 routes.use("/uptime",  require("./api/uptime/_index"))
 
+routes.use("/shop",  require("./api/shop/_index"))
+
+
 module.exports = routes;
