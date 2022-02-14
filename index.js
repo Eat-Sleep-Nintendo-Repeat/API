@@ -46,9 +46,6 @@ app.get("/api", (req, res) => {
   res.send("This is the official Eat, Sleep, Nintendo, Repeat API. You can find the Docs here: https://github.com/Eat-Sleep-Nintendo-Repeat/API/blob/main/API%20Documentation.md")
 })
 
-//authentication
-app.use("/", require("./authentication"))
-
 // routes
 app.use("/api", require("./routes/index"))
 

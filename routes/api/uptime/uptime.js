@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios")
 const config = require("../../../config.json")
 const io = require("../../socket/socketio")
+const {nanoid} = require("nanoid")
 
 
 const route = express.Router();
@@ -31,6 +32,24 @@ route.get("/", (req, res) => {
     } else {
         res.json({offline: fetch.monitors.map(x => true ? {"name": x.friendly_name, id: x.id} : {})})
     }
+})
+
+//send 200 if Bot is reachable via socket.io
+route.get("/bot", (req, res) => {
+
+    //if bot isnt responding within 10 seconds send 500
+    var timeout = setTimeout(() => {
+        res.status(500).send()
+    }, 10000)
+
+    let oid = nanoid()
+    io.emitter.once(`uptime_${oid}`, data => {
+        res.status(200).send();
+        clearTimeout(timeout);
+    });
+
+    io.to("system").emit("uptime", {oid});
+    
 })
 
 module.exports = route;

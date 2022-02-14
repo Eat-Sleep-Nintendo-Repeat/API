@@ -42,7 +42,7 @@ route.post("/deactivate", async (req, res) => {
     }
 
     var oid = nanoid()
-        io.emitter.on(`shop_confirmation_${oid}`, async (data) => {
+        io.emitter.once(`shop_confirmation_${oid}`, async (data) => {
             res.status(200).send({})
 
 

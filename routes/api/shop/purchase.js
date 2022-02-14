@@ -69,7 +69,7 @@ route.post("/", async (req, res) => {
     //creates listener recall
     var oid = nanoid()
     if (!is_gift) {
-        io.emitter.on(`shop_confirmation_${oid}`, async (data) => {
+        io.emitter.once(`shop_confirmation_${oid}`, async (data) => {
 
             let nMemberDB = await MEMBER.findOne({id: sanitizeDB(receiver.id)})
             for (var item in nMemberDB.currencys.gems.purchases) {
