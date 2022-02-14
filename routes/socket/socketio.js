@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
         socket.join(data.EventGroup)
 
         //Send join confirmation
-        ssocket.to(`log_${socket.user.id}`).emit("log", {message: `successfully joined ${data.EventGroup}`})
+        socket.to(`log_${socket.user.id}`).emit("log", {message: `successfully joined ${data.EventGroup}`})
     })
 
     //allows connected clients to leave an event group
