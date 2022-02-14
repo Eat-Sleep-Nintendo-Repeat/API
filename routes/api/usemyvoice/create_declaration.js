@@ -41,7 +41,7 @@ route.post("/", async  (req, res) => {
     //save to database
     await MEMBER.findOneAndUpdate({id: sanitize(req.user.id)}, {usemyvoice: {accepted: true, state: "accepted", signature: req.body.signature, date: new Date()}}, {new: true}).then(x => {
         res.send(x.usemyvoice)
-        // io.emit("log", {color: "#EB459E", title: "Neue use my voice Einverständniss Erklärung!", fields: [{name: "User", value: memberdb.informations.name + "#" + memberdb.informations.discriminator, inline: true}, {name: "ID", value: memberdb.id, inline: true}, {name: "Signature", value: req.body.signature}]})
+        io.to("system").emit("log", {color: "#EB459E", title: "Neue use my voice Einverständniss Erklärung!", fields: [{name: "User", value: memberdb.informations.name + "#" + memberdb.informations.discriminator, inline: true}, {name: "ID", value: memberdb.id, inline: true}, {name: "Signature", value: req.body.signature}]})
 
         //fetch email from discord api
         if (req.body.email === true) {
