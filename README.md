@@ -1,8 +1,6 @@
 
 <div align="center">
-  <img src="https://eat-sleep-nintendo-repeat.eu/static/media/logo.6ea15ec5.png" alt="ESNR-Logo" height="128">
-  <br>
-  <h3>Eat, Sleep, Nintendo, Repeat</h3>
+  <img src="https://eat-sleep-nintendo-repeat.eu/static/media/fulllogo.6d470b3f.svg" alt="ESNR-Logo" height="128">
   <h1>API</h1>
   <p>
     The API of the German Nintendo Community on Discord made by <a href="https://github.com/DustinDEV2more">Dustin_DM</a>!
