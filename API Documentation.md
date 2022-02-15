@@ -139,7 +139,7 @@ Searches the database for users based on the search query **OR** returns more us
 ### Data to be passed
 | Query            | Details                                       |
 |------------------|-----------------------------------------------|
-| id               | The Discord id name or parts of it            |
+| id               | The Discord ID or parts of it            |
 | username         | The Discord user name or parts of it          |
 | discriminator    | The Discord user discriminator or parts of it |
 | type             | The permission type number                    |
@@ -422,6 +422,57 @@ curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/shop/purchased \
 }]
 ```
 
+
+
+# POST /shop
+Adds an Item to your inventory and removes the required amount of gems from your database. Or for short: buys an item
+
+### Authorization notes
+<p style="color:yellow">This Method canot be used with an API Key! Its only meant to be used with an access token via the official Webinterface</p>
+
+### Data to be passed
+| json body            | Details |
+|----------------------|---------|
+| id (Intiger)(!) | The order_id of the Item you want to buy |
+| gift (String)   | The ID of the User you want to gift that item to |
+
+### CURL example
+```
+curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/shop \
+     -H "Authentication: Access <short living access token>" \
+     -d "{\"id\": 1, \"gift\": \"330380702505762817\"}"
+```
+
+### Response
+```json
+{}
+```
+
+
+
+# POST /shop/[activate/deactivate]
+Activated or deactivated an Item from your inventory
+
+### Authorization notes
+<p style="color:yellow">This Method canot be used with an API Key! Its only meant to be used with an access token via the official Webinterface</p>
+
+### Data to be passed
+| json body            | Details |
+|----------------------|---------|
+| id (Intiger)(!) | The order_id of the Item you want to activate or deactivate |
+
+### CURL example
+```
+curl -X PUT https://eat-sleep-nintendo-repeat.eu/api/shop \
+     -H "Authentication: Access <short living access token>" \
+     -d "{\"id\": 1}"
+```
+
+### Response
+```json
+{}
+```
+
 # <a name="warns"></a> GET /warns
 returns all warnings or filters all warnings by user id
 
@@ -491,9 +542,7 @@ returns a list of all services that are reported as offline by [UptimeRobot](htt
 
 ### CURL example
 ```
-curl https://eat-sleep-nintendo-repeat.eu/api/uptime \
-     -H "Authentication: Token <your API Key>"
-
+curl https://eat-sleep-nintendo-repeat.eu/api/uptime
 ```
 
 ### Response
@@ -504,4 +553,16 @@ curl https://eat-sleep-nintendo-repeat.eu/api/uptime \
         "id": 789870714
     }]
 }]
+```
+
+# GET /uptime/bot
+Respondes with status code 200 or 500 depending on if a Discord Bot instance is reachable. is only really used for uptimerobot to determ if the Discord Bot is online or not
+
+### CURL example
+```
+curl https://eat-sleep-nintendo-repeat.eu/api/uptime/bot
+```
+
+### Response
+```json
 ```
