@@ -4,6 +4,8 @@ const routes = express.Router();
 
 routes.use("/uptime",  require("./api/uptime/_index"))
 
+routes.use("/imagestore",  require("./api/images/_index"))
+
 //authentication
 routes.use("/", require("../authentication"))
 
