@@ -1,12 +1,12 @@
 const express = require("express");
 const IMAGESTORE = require("../../../models/IMAGESTORE")
-
+var sanitize = require('mongo-sanitize');
 const route = express.Router();
 
 //fetch image buffer from database and send it to client
 route.get("/:id", async (req, res) => {
     try {
-        var image = await IMAGESTORE.findOne({id: req.params.id})
+        var image = await IMAGESTORE.findOne(sanitize({ id: req.params.id }));
         if(image) {
             var img = Buffer.from(image.image, 'base64');
             res.setHeader("Content-Type", "image/png");
