@@ -36,7 +36,7 @@ const MemberSchema = mongoose.Schema({
       last_daily: { type: Date, default: null },
     },
   },
-  
+
   oauth: {
     e_access_token: { default: null, type: String },
     e_refresh_token: String,
@@ -53,15 +53,20 @@ const MemberSchema = mongoose.Schema({
   },
 
   settings: {
-    levelup_notify: {type: Boolean, default: false},
-    page_private: {type: Boolean, default: false},
+    levelup_notify: { type: Boolean, default: false },
+    page_private: { type: Boolean, default: false },
   },
 
-  dev_accounts: {type: Array, default: []},
+  nintendo_account: {
+    session_token: { type: String, default: null },
+    iksm_token: { type: String, default: null },
+  },
+
+  dev_accounts: { type: Array, default: [] },
 
   usemyvoice: {
     accepted: { type: Boolean, default: false },
-    state: {type: String, default: null},
+    state: { type: String, default: null },
     date: Date,
     signature: String,
   },
