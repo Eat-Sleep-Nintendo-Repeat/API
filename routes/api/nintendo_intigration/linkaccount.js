@@ -10,9 +10,7 @@ const base64url = require("base64url");
 const request2 = require("request-promise-native");
 const jar = request2.jar();
 const request = request2.defaults({ jar: jar });
-const { v4: uuidv4 } = require("uuid");
-const { gzip } = require("zlib");
-const { resolveAny } = require("dns");
+const axios = require("axios").default;
 
 var codeChallenges = {};
 
@@ -241,9 +239,7 @@ async function getWebServiceTokenWithSessionToken(sessionToken, game) {
 const splatNetUrl = "https://app.splatoon2.nintendo.net";
 
 async function getSessionCookieForSplatNet(accessToken) {
-  const resp = await request({
-    method: "GET",
-    uri: splatNetUrl,
+  const resp = await axios.get(splatNetUrl, {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "X-Platform": "Android",
@@ -256,26 +252,10 @@ async function getSessionCookieForSplatNet(accessToken) {
     },
   });
 
-  const iksmToken = getIksmToken();
-}
+  var iksm_session = resp.headers["set-cookie"][0].split(";")[0].replace("iksm_session=", "");
 
-function getCookie(key, url) {
-  const cookies = jar.getCookies(url);
-  let value;
-  cookies.find((cookie) => {
-    if (cookie.key === key) {
-      value = cookie.value;
-    }
-    return cookie.key === key;
-  });
-  return value;
-}
+  console.log(resp.headers["set-cookie"][0].split(";")[0].replace("iksm_session=", ""));
 
-function getIksmToken() {
-  iksm_session = getCookie("iksm_session", splatNetUrl);
-  if (iksm_session == null) {
-    throw new Error("Could not get iksm_session cookie");
-  }
   return iksm_session;
 }
 
@@ -310,10 +290,9 @@ route.post("/linkaccount", async (req, res, next) => {
     var WebService = await getWebServiceTokenWithSessionToken(params.session_token, (game = "S2"));
     params.web_service_token = WebService.token;
 
-    await getSessionCookieForSplatNet(params.web_service_token.accessToken);
-    const iksmToken = getIksmToken();
+    const iksmToken = await getSessionCookieForSplatNet(params.web_service_token.accessToken);
 
-    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { nintendo_account: { session_token: params.session_token, iksm_token: "not refreshed yet" } }).then(async (doc) => {
+    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { nintendo_account: { session_token: params.session_token, iksm_token: iksmToken } }).then(async (doc) => {
       res.json({
         success: true,
         nintendo_account: WebService.accountdata,
@@ -337,7 +316,6 @@ exports.userAgent = {
 };
 exports.functions = {
   getWebServiceTokenWithSessionToken,
-  getIksmToken,
   getSessionCookieForSplatNet,
 };
 

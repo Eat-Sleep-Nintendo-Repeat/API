@@ -43,8 +43,7 @@ instance.interceptors.response.use(
 
       try {
         var Webservice = await functions.getWebServiceTokenWithSessionToken(originalConfig.member.nintendo_account.session_token, (game = "S2"));
-        await functions.getSessionCookieForSplatNet(Webservice.token.accessToken);
-        var iksm_session = functions.getIksmToken();
+        var iksm_session = await functions.getSessionCookieForSplatNet(Webservice.token.accessToken);
 
         originalConfig.headers["cookie"] = `iksm_session=${iksm_session}`;
 
