@@ -11,6 +11,7 @@ const request2 = require("request-promise-native");
 const jar = request2.jar();
 const request = request2.defaults({ jar: jar });
 const axios = require("axios").default;
+const schedule = require("node-schedule");
 
 var codeChallenges = {};
 
@@ -67,8 +68,27 @@ function getNSOLogin(userid) {
   return `https://accounts.nintendo.com/connect/1.0.0/authorize?${stringParams}`;
 }
 
-//exchnage code to token
-const userAgentVersion = `2.2.0`; // version of Nintendo Switch App, updated once or twice per year
+var userAgentVersion = "2.2.0";
+var userAgentString = `com.nintendo.znca/${userAgentVersion} (Android/7.1.2)`;
+
+//update useragent at start of api
+fetchUserAgentVersion();
+
+//update useragentversion once a day
+schedule.scheduleJob("30 5 * * *", async () => {
+  fetchUserAgentVersion();
+});
+
+async function fetchUserAgentVersion() {
+  var resp = await request({
+    method: "GET",
+    uri: "https://raw.githubusercontent.com/samuelthomas2774/nintendo-app-versions/main/data/coral-nintendo-eu.json",
+    json: true,
+  });
+  userAgentVersion = resp.versions[0].version;
+  userAgentString = `com.nintendo.znca/${resp.versions[0].version} (Android/7.1.2)`;
+}
+
 async function getSessionToken(session_token_code, codeVerifier) {
   const resp = await request({
     method: "POST",
@@ -88,8 +108,6 @@ async function getSessionToken(session_token_code, codeVerifier) {
   });
   return resp.session_token;
 }
-
-const userAgentString = `com.nintendo.znca/${userAgentVersion} (Android/7.1.2)`;
 
 async function getApiToken(session_token) {
   const resp = await request({
@@ -182,6 +200,7 @@ async function getApiLogin(userinfo, flapg_nso, apiAccessToken) {
     json: true,
     gzip: true,
   });
+
   return {
     webapiserver_token: await resp.result.webApiServerCredential.accessToken,
     webapiuserdata: await resp.result.user,
@@ -192,6 +211,8 @@ async function getWebServiceToken(token, flapg_app, game, apiAccessToken) {
   let parameterId;
   if (game == "S2") {
     parameterId = 5741031244955648; // SplatNet 2 ID
+  } else if (game == "S3") {
+    parameterId = 4834290508791808;
   } else if (game == "AC") {
     parameterId = 4953919198265344; // Animal Crossing ID
   }
@@ -233,13 +254,15 @@ async function getWebServiceTokenWithSessionToken(sessionToken, game) {
   return {
     token: web_service_token,
     accountdata: apiAccessToken.webapiuserdata,
+    userdata: userInfo,
   };
 }
 
-const splatNetUrl = "https://app.splatoon2.nintendo.net";
+const splatNet2Url = "https://app.splatoon2.nintendo.net";
+const splatNet3Url = "https://api.lp1.av5ja.srv.nintendo.net";
 
 async function getSessionCookieForSplatNet(accessToken) {
-  const resp = await axios.get(splatNetUrl, {
+  const resp = await axios.get(splatNet2Url, {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "X-Platform": "Android",
@@ -254,9 +277,29 @@ async function getSessionCookieForSplatNet(accessToken) {
 
   var iksm_session = resp.headers["set-cookie"][0].split(";")[0].replace("iksm_session=", "");
 
-  console.log(resp.headers["set-cookie"][0].split(";")[0].replace("iksm_session=", ""));
-
   return iksm_session;
+}
+
+async function getSessionTokenForSplatNet3(accessToken, na_country) {
+  var VersionRes = await request.get("https://raw.githubusercontent.com/samuelthomas2774/nintendo-app-versions/main/data/splatnet3-app.json", { json: true });
+
+  const resp = await axios.post(
+    splatNet3Url + "/api/bullet_tokens",
+    {},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Web-View-Ver": VersionRes.version,
+        "X-NACOUNTRY": na_country,
+        "Accept-Language": "en-GB",
+        "X-GameWebToken": accessToken,
+      },
+    }
+  );
+
+  if (resp.status === 204) return null;
+
+  return resp.data.bulletToken;
 }
 
 //create oauth url and send it to member
@@ -266,7 +309,6 @@ route.get("/surl", (req, res, next) => {
 
 route.post("/linkaccount", async (req, res, next) => {
   try {
-    console.log(req.user.id);
     var redirectURL = req.body.rink;
 
     //extract session_state, session_token_code and state from rink
@@ -279,20 +321,17 @@ route.post("/linkaccount", async (req, res, next) => {
         params[splitStr[0]] = splitStr[1];
       });
 
-    // console.log(params);
-    // console.log(codeChallenges[req.user.id]);
-
     if (!codeChallenges[req.user.id]) return res.status(400).json({ message: "Please start the process again" });
 
     //exchange session_token_code for session_token
     params.session_token = await getSessionToken(params.session_token_code, codeChallenges[req.user.id]);
 
-    var WebService = await getWebServiceTokenWithSessionToken(params.session_token, (game = "S2"));
-    params.web_service_token = WebService.token;
+    var WebService = await getWebServiceTokenWithSessionToken(params.session_token, (game = "S3"));
+    params.web_service_token = WebService.token.accessToken;
 
-    const iksmToken = await getSessionCookieForSplatNet(params.web_service_token.accessToken);
+    var bullet_token = await getSessionTokenForSplatNet3(params.web_service_token, WebService.userdata.country);
 
-    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { nintendo_account: { session_token: params.session_token, iksm_token: iksmToken } }).then(async (doc) => {
+    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { nintendo_account: { session_token: params.session_token, bulletToken: bullet_token } }).then(async (doc) => {
       res.json({
         success: true,
         nintendo_account: WebService.accountdata,
@@ -317,6 +356,7 @@ exports.userAgent = {
 exports.functions = {
   getWebServiceTokenWithSessionToken,
   getSessionCookieForSplatNet,
+  getSessionTokenForSplatNet3,
 };
 
 //TODO

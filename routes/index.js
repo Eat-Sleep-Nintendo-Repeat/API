@@ -29,4 +29,6 @@ routes.use("/nintendo", require("./api/nintendo_intigration/_index"));
 
 routes.use("/splatnet2", require("./api/splatnet2_intigration/_index"));
 
+routes.use("/splatnet3", require("./api/splatnet3_intigration/_index"));
+
 module.exports = routes;
