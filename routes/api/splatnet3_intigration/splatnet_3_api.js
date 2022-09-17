@@ -2,7 +2,7 @@ const axios = require("axios").default;
 const MEMBER = require("../../../models/MEMBER");
 const { userAgent, functions } = require("../nintendo_intigration/linkaccount");
 
-var baseUrl = "https://api.lp1.av5ja.srv.nintendo.net/api";
+var baseUrl = "https://api.lp1.av5ja.srv.nintendo.net/api/graphql";
 
 const instance = axios.create({
   baseURL: baseUrl,
@@ -30,21 +30,20 @@ instance.interceptors.request.use(
     config.headers["X-Web-View-Ver"] = await cachesplatnetuseragent();
     config.headers["Content-Type"] = "application/json";
 
-    if (!config.user) return config;
+    if (!config.headers.user) return config;
     if (!config.member) {
-      var member = await MEMBER.findOne({ id: config.user });
+      var member = await MEMBER.findOne({ id: config.headers.user });
       if (!member) return config;
       if (!member.nintendo_account.bulletToken) return config;
       config.member = member;
     }
-    var token = config.member.nintendo_account.bulletToken.token;
+    var token = config.member.nintendo_account.bulletToken;
     if (token) {
-      config.headers["authorization"] = `Bearer ${token}`;
+      config.headers["authorization"] = `Bearer ${token.token}`;
     }
     return config;
   },
   (error) => {
-    console.log(error);
     return error;
   }
 );
@@ -56,24 +55,27 @@ instance.interceptors.response.use(
   async (err) => {
     const originalConfig = err.config;
 
-    if (err.response.status === 403 && !originalConfig._retry) {
+    if (err.response.status === 401 && !originalConfig._retry) {
       originalConfig._retry = true;
 
       try {
         var web_service_token = await functions.getWebServiceTokenWithSessionToken(originalConfig.member.nintendo_account.session_token, (game = "S3"));
         var bulletToken = await functions.getSessionTokenForSplatNet3(web_service_token.token.accessToken, web_service_token.userdata.country);
+        console.log(bulletToken)
+        console.log(web_service_token.userdata.country)
 
         originalConfig.headers["authorization"] = `Bearer ${bulletToken}`;
 
         //write to database
         await MEMBER.findOneAndUpdate(
-          { id: originalConfig.user },
+          { id: 
+            originalConfig.headers.user },
           {
-            "nintendo_account.bulletToken": bulletToken,
-            "nintendo_account.region": web_service_token.userdata.country,
+            "nintendo_account.bulletToken.token": bulletToken,
+            "nintendo_account.bulletToken.region": web_service_token.userdata.country,
           }
-        );
-
+        )
+        
         var secondtry = await axios(originalConfig);
 
         return secondtry;

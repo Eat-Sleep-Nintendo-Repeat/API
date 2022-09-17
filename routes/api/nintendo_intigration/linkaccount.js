@@ -331,7 +331,7 @@ route.post("/linkaccount", async (req, res, next) => {
 
     var bullet_token = await getSessionTokenForSplatNet3(params.web_service_token, WebService.userdata.country);
 
-    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { nintendo_account: { session_token: params.session_token, bulletToken: bullet_token } }).then(async (doc) => {
+    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { "nintendo_account.session_token": params.session_token,  "nintendo_account.bulletToken": {token: bullet_token, region: WebService.userdata.country } }).then(async (doc) => {
       res.json({
         success: true,
         nintendo_account: WebService.accountdata,
