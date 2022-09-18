@@ -197,7 +197,7 @@ var singleplayerstages = [
 //admin route that creates a new run in database and returns it randomizes values IT ALSO CLOSES ALL OTHER OPEN RUNS
 route.get("/dev", async (req, res) => {
   var reqw = await axios.post(
-    baseUrl + "/graphql",
+    baseUrl,
     {
       extensions: {
         persistedQuery: {
@@ -206,9 +206,9 @@ route.get("/dev", async (req, res) => {
         },
       },
     },
-    { user: req.user.id }
+    { headers: {user: req.user.id} }
   );
-  console.log(reqw);
+  res.send(reqw.data)
 });
 
 //admin route that creates a new run in database and returns it randomizes values IT ALSO CLOSES ALL OTHER OPEN RUNS
