@@ -61,21 +61,20 @@ instance.interceptors.response.use(
       try {
         var web_service_token = await functions.getWebServiceTokenWithSessionToken(originalConfig.member.nintendo_account.session_token, (game = "S3"));
         var bulletToken = await functions.getSessionTokenForSplatNet3(web_service_token.token.accessToken, web_service_token.userdata.country);
-        console.log(bulletToken)
-        console.log(web_service_token.userdata.country)
+        console.log(bulletToken);
+        console.log(web_service_token.userdata.country);
 
         originalConfig.headers["authorization"] = `Bearer ${bulletToken}`;
 
         //write to database
         await MEMBER.findOneAndUpdate(
-          { id: 
-            originalConfig.headers.user },
+          { id: originalConfig.headers.user },
           {
             "nintendo_account.bulletToken.token": bulletToken,
             "nintendo_account.bulletToken.region": web_service_token.userdata.country,
           }
-        )
-        
+        );
+
         var secondtry = await axios(originalConfig);
 
         return secondtry;
