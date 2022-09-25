@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema({
-  currentFest: Object,
+  currentFestQuery: Object,
   LatestBattleHistoriesQuery: Object,
   DetailFestRecordDetailQuery: Object,
 

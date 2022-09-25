@@ -1,10 +1,7 @@
 const MEMBER = require("../../../models/MEMBER");
-var sanitize = require("mongo-sanitize");
-const { nanoid } = require("nanoid");
 
 const express = require("express");
 const { axios, baseUrl } = require("../splatnet3_intigration/splatnet_3_api");
-const { isErrored } = require("nodemailer/lib/xoauth2");
 
 const route = express.Router();
 
@@ -59,7 +56,7 @@ route.get("/:festid", async (req, res) => {
   );
 
   //check vote of every member if type is over 50
-
+  if (!reqw.data.data) return res.status(500).send();
   var promised = [];
   if (req.user.type >= 50) {
     reqw.data.data.fest.teams[0].dcvotes = [];
@@ -71,29 +68,34 @@ route.get("/:festid", async (req, res) => {
     memberdb = memberdb.filter((x) => x.nintendo_account.session_token != null && x.delete_in === null);
 
     //get splatfestteam of every member
-
     memberdb.forEach(async (m) => {
+      if (m.nintendo_account.bulletToken.token === null) return;
       promised.push(
         new Promise(async (resolve, reject) => {
-          var festfetch = await axios.post(
-            baseUrl,
-            {
-              extensions: {
-                persistedQuery: {
-                  version: 1,
-                  sha256Hash: "2d661988c055d843b3be290f04fb0db9",
+          try {
+            var festfetch = await axios.post(
+              baseUrl,
+              {
+                extensions: {
+                  persistedQuery: {
+                    version: 1,
+                    sha256Hash: "2d661988c055d843b3be290f04fb0db9",
+                  },
+                },
+                variables: {
+                  festId: req.params.festid,
                 },
               },
-              variables: {
-                festId: req.params.festid,
-              },
-            },
-            { headers: { user: m.id } }
-          );
-          if (festfetch.data && festfetch.data.data.fest.myTeam.id) {
-            reqw.data.data.fest.teams.find((x) => x.id === festfetch.data.data.fest.myTeam.id).dcvotes.push(m.id);
+              { headers: { user: m.id } }
+            );
+
+            if (festfetch.data && festfetch.data.data.fest.myTeam.id) {
+              reqw.data.data.fest.teams.find((x) => x.id === festfetch.data.data.fest.myTeam.id).dcvotes.push(m.id);
+            }
+            resolve();
+          } catch {
+            resolve();
           }
-          resolve();
         })
       );
     });
