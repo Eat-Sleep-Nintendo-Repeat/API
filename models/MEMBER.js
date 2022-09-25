@@ -60,7 +60,7 @@ const MemberSchema = mongoose.Schema({
   nintendo_account: {
     session_token: { type: String, default: null },
     // iksm_token: { type: String, default: null }, //splatoon 2 token
-    bulletToken: { token: { type: String, default: null }, region: { type: String, default: null } }, //splatoon 3 token
+    bulletToken: { token: { type: String, default: null }, region: { type: String, default: "DE" } }, //splatoon 3 token
   },
 
   dev_accounts: { type: Array, default: [] },

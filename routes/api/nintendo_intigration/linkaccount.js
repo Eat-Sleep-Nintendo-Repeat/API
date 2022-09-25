@@ -12,6 +12,7 @@ const jar = request2.jar();
 const request = request2.defaults({ jar: jar });
 const axios = require("axios").default;
 const schedule = require("node-schedule");
+const { nanoid } = require("nanoid");
 
 var codeChallenges = {};
 
@@ -201,6 +202,8 @@ async function getApiLogin(userinfo, flapg_nso, apiAccessToken) {
     gzip: true,
   });
 
+  if (!resp.result) return;
+
   return {
     webapiserver_token: await resp.result.webApiServerCredential.accessToken,
     webapiuserdata: await resp.result.user,
@@ -244,18 +247,22 @@ async function getWebServiceToken(token, flapg_app, game, apiAccessToken) {
 }
 
 async function getWebServiceTokenWithSessionToken(sessionToken, game) {
-  const apiTokens = await getApiToken(sessionToken); // I. Get API Token
-  const userInfo = await getUserInfo(apiTokens.access); // II. Get userInfo
+  try {
+    const apiTokens = await getApiToken(sessionToken); // I. Get API Token
+    const userInfo = await getUserInfo(apiTokens.access); // II. Get userInfo
 
-  const flapg_nso = await callFlapg(apiTokens.id, 1); // III. Get F flag [NSO]
-  const apiAccessToken = await getApiLogin(userInfo, flapg_nso, apiTokens.id); // IV. Get API Access Token
-  const flapg_app = await callFlapg(apiAccessToken.webapiserver_token, 2); // V. Get F flag [App]
-  const web_service_token = await getWebServiceToken(apiAccessToken.webapiserver_token, flapg_app, game, apiTokens.id); // VI. Get Web Service Token
-  return {
-    token: web_service_token,
-    accountdata: apiAccessToken.webapiuserdata,
-    userdata: userInfo,
-  };
+    const flapg_nso = await callFlapg(apiTokens.id, 1); // III. Get F flag [NSO]
+    const apiAccessToken = await getApiLogin(userInfo, flapg_nso, apiTokens.id); // IV. Get API Access Token
+    const flapg_app = await callFlapg(apiAccessToken.webapiserver_token, 2); // V. Get F flag [App]
+    const web_service_token = await getWebServiceToken(apiAccessToken.webapiserver_token, flapg_app, game, apiTokens.id); // VI. Get Web Service Token
+    return {
+      token: web_service_token,
+      accountdata: apiAccessToken.webapiuserdata,
+      userdata: userInfo,
+    };
+  } catch {
+    return;
+  }
 }
 
 const splatNet2Url = "https://app.splatoon2.nintendo.net";
@@ -302,6 +309,32 @@ async function getSessionTokenForSplatNet3(accessToken, na_country) {
   return resp.data.bulletToken;
 }
 
+var queue = [];
+async function refreshTokenForSplatNet3(session_token) {
+  var id = nanoid(64);
+  queue.push(id);
+
+  return new Promise(async (resolve, reject) => {
+    async function checkPlace() {
+      try {
+        if (queue[0] === id) {
+          var web_service_token = await getWebServiceTokenWithSessionToken(session_token, (game = "S3"));
+          var bullet_token = await getSessionTokenForSplatNet3(web_service_token.token.accessToken, web_service_token.userdata.country);
+          queue.shift();
+          resolve({ token: bullet_token, country: web_service_token.userdata.country });
+        } else {
+          setTimeout(async () => {
+            await checkPlace();
+          }, 1000);
+        }
+      } catch {
+        reject();
+      }
+    }
+    await checkPlace();
+  });
+}
+
 //create oauth url and send it to member
 route.get("/surl", (req, res, next) => {
   res.json({ surl: getNSOLogin(req.user.id) });
@@ -331,7 +364,7 @@ route.post("/linkaccount", async (req, res, next) => {
 
     var bullet_token = await getSessionTokenForSplatNet3(params.web_service_token, WebService.userdata.country);
 
-    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { "nintendo_account.session_token": params.session_token,  "nintendo_account.bulletToken": {token: bullet_token, region: WebService.userdata.country } }).then(async (doc) => {
+    await MEMBER.findOneAndUpdate({ id: sanitize(req.user.id) }, { "nintendo_account.session_token": params.session_token, "nintendo_account.bulletToken": { token: bullet_token, region: WebService.userdata.country } }).then(async (doc) => {
       res.json({
         success: true,
         nintendo_account: WebService.accountdata,
@@ -354,12 +387,5 @@ exports.userAgent = {
   userAgentVersion,
 };
 exports.functions = {
-  getWebServiceTokenWithSessionToken,
-  getSessionCookieForSplatNet,
-  getSessionTokenForSplatNet3,
+  refreshTokenForSplatNet3,
 };
-
-//TODO
-// catch all erroes that could occour
-//make route only accessible for user tokens
-//make in belong of header
