@@ -215,7 +215,7 @@ route.post("/newrun", async (req, res) => {
   });
 
   //create new run with random choosen stage
-  var stage = singleplayerstages[Math.floor(Math.random() * singleplayerstages.length)];
+  var stage = singleplayerstages[Math.floor(crypto.randomInt(singleplayerstages.length))];
   await new RUN({ stage_id: stage.id, id: nanoid(10), area: stage.area }).save().then((doc) => res.json(doc));
 });
 
