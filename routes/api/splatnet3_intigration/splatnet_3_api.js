@@ -1,6 +1,7 @@
 const axios = require("axios").default;
 const MEMBER = require("../../../models/MEMBER");
 const { userAgent, functions } = require("../nintendo_intigration/linkaccount");
+var sanitize = require("mongo-sanitize");
 
 var baseUrl = "https://api.lp1.av5ja.srv.nintendo.net/api/graphql";
 
@@ -32,7 +33,7 @@ instance.interceptors.request.use(
 
     if (!config.headers.user) return config;
     if (!config.member) {
-      var member = await MEMBER.findOne({ id: config.headers.user });
+      var member = await MEMBER.findOne(sanitize({ id: config.headers.user }));
       if (!member) return config;
       if (!member.nintendo_account.bulletToken) return config;
       config.member = member;
@@ -65,13 +66,10 @@ instance.interceptors.response.use(
         originalConfig.headers["authorization"] = `Bearer ${bulletToken.token}`;
 
         //write to database
-        await MEMBER.findOneAndUpdate(
-          { id: originalConfig.headers.user },
-          {
-            "nintendo_account.bulletToken.token": bulletToken.token,
-            "nintendo_account.bulletToken.region": bulletToken.country,
-          }
-        );
+        await MEMBER.findOneAndUpdate(sanitize({ id: originalConfig.headers.user }), {
+          "nintendo_account.bulletToken.token": bulletToken.token,
+          "nintendo_account.bulletToken.region": bulletToken.country,
+        });
 
         var secondtry = await axios(originalConfig);
 
