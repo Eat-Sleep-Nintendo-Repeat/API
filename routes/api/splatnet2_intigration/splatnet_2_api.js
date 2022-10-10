@@ -1,6 +1,7 @@
 const axios = require("axios").default;
 const MEMBER = require("../../../models/MEMBER");
 const { userAgent, functions } = require("../nintendo_intigration/linkaccount");
+var sanitize = require("mongo-sanitize");
 
 var baseUrl = "https://app.splatoon2.nintendo.net/api";
 
@@ -15,7 +16,7 @@ instance.interceptors.request.use(
 
     if (!config.user) return config;
     if (!config.member) {
-      var member = await MEMBER.findOne({ id: config.user });
+      var member = await MEMBER.findOne(sanitize({ id: config.user }));
       if (!member) return config;
       if (!member.nintendo_account.iksm_token) return config;
       config.member = member;
