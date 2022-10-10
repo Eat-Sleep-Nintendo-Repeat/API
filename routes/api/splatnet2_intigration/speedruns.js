@@ -195,20 +195,6 @@ var singleplayerstages = [
   },
 ];
 
-//send stageimages
-route.get("/stagepic/:levelid", async (req, res) => {
-  var level = parseInt(req.params.levelid.replace(".png"));
-  if (isNaN(level)) return res.status(400);
-  if (level > 105 || level < 1) return res.status(400);
-
-  var file = await fs.readFileSync(__dirname + `\\level_icons\\${level}.png`);
-
-  var img = Buffer.from(file.buffer, "base64");
-  res.setHeader("Content-Type", "image/png");
-  res.setHeader("Content-Length", img.length);
-  res.send(img);
-});
-
 //admin route that creates a new run in database and returns it randomizes values IT ALSO CLOSES ALL OTHER OPEN RUNS
 route.post("/newrun", async (req, res) => {
   if (req.user.type < 50) return res.status(403).json({ error: true, message: "You are not allowed to do this." });
