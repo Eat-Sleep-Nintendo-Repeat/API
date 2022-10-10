@@ -8,4 +8,4 @@ jobs:
     name: test
     steps:
       - name: Test Code
-        run: docker container stop S3S
+        run: docker container start S3S
