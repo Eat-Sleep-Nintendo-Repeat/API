@@ -8,4 +8,4 @@ jobs:
     name: test
     steps:
       - name: Test Code
-      - run: tree
+        run: tree
