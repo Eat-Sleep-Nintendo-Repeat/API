@@ -69,16 +69,7 @@ function getNSOLogin(userid) {
   return `https://accounts.nintendo.com/connect/1.0.0/authorize?${stringParams}`;
 }
 
-var userAgentVersion = "2.3.0";
-var userAgentString = `com.nintendo.znca/${userAgentVersion} (Android/7.1.2)`;
-
-//update useragent at start of api
-fetchUserAgentVersion();
-
-//update useragentversion once a day
-schedule.scheduleJob("30 5 * * *", async () => {
-  fetchUserAgentVersion();
-});
+var userAgentString = `com.nintendo.znca/${fetchUserAgentVersion()} (Android/7.1.2)`;
 
 async function fetchUserAgentVersion() {
   var resp = await request({
@@ -86,8 +77,7 @@ async function fetchUserAgentVersion() {
     uri: "https://raw.githubusercontent.com/samuelthomas2774/nintendo-app-versions/main/data/coral-nintendo-eu.json",
     json: true,
   });
-  userAgentVersion = resp.versions[0].version;
-  userAgentString = `com.nintendo.znca/${resp.versions[0].version} (Android/7.1.2)`;
+  return resp.versions[0].version;
 }
 
 async function getSessionToken(session_token_code, codeVerifier) {
