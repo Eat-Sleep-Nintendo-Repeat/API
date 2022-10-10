@@ -1,0 +1,11 @@
+name: deploy to shinteka
+on:
+  push:
+    branches: [test-self-hostet-runner]
+jobs:
+  test:
+    runs-on: self-hosted
+    name: test
+    steps:
+      - name: Test Code
+      - run: tree
