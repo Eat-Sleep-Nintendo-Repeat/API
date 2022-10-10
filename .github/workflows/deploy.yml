@@ -3,10 +3,16 @@ on:
   push:
     branches: [test-self-hostet-runner]
 jobs:
-  test:
+  stopS3S:
     runs-on: self-hosted
     name: test
     steps:
       - name: Test Code
         run: docker container stop S3S
-        run: docker container trusting_sammet S3S
+
+  stoptrusting_sammet:
+    runs-on: self-hosted
+    name: test
+    steps:
+      - name: Test Code
+        run: docker container stop trusting_sammet
