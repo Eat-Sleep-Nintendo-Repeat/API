@@ -69,7 +69,7 @@ function getNSOLogin(userid) {
   return `https://accounts.nintendo.com/connect/1.0.0/authorize?${stringParams}`;
 }
 
-var userAgentVersion = "2.2.0";
+var userAgentVersion = "2.3.0";
 var userAgentString = `com.nintendo.znca/${userAgentVersion} (Android/7.1.2)`;
 
 //update useragent at start of api
