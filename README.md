@@ -1,4 +1,4 @@
-# DEPRECATED❗
+# DEPRECATED❗[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 Version 1 of the Eat, Sleep, Nintendo, Repeat API is no longer maintained. The reason for discontinuing the project is simple: I want to start over. This codebase has became a mess and since i am in training to become a software developer in my company i leanred so much new stuff i want to bring in. [The Repo for Eat, Sleep, Nintendo, Repeat V2 can be found here](https://github.com/Eat-Sleep-Nintendo-Repeat/API-v2)
 <br/>
 <br/>
@@ -13,8 +13,8 @@ Version 1 of the Eat, Sleep, Nintendo, Repeat API is no longer maintained. The r
   </p>
 </div>
 
-## API Documentation
+## API Documentation [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 The official API Documentation for this API can be found [here](https://github.com/Eat-Sleep-Nintendo-Repeat/API/blob/main/API%20Documentation.md)
 
-## [socket.io]() Documentation
+## [socket.io]() Documentation [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 Want to recive live updates? The official socket Documentation for this API can be found [here](https://github.com/Eat-Sleep-Nintendo-Repeat/API/blob/main/Socket%20Documentation.md)
